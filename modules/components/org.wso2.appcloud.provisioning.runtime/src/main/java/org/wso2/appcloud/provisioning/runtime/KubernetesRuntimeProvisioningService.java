@@ -1052,4 +1052,20 @@ public class KubernetesRuntimeProvisioningService implements RuntimeProvisioning
 			throw new RuntimeProvisioningException(message);
 		}
 	}
+
+    public void updateDefaultVersionServicewithLabel(String serviceName, String labelKey, String labelValue)
+            throws RuntimeProvisioningException {
+        String namespace = this.namespace.getMetadata().getName();
+
+        try {
+            KubernetesClient kubClient = KubernetesProvisioningUtils.getFabric8KubernetesClient();
+            kubClient.services().inNamespace(namespace).withName(serviceName).edit().editMetadata()
+                    .addToLabels(labelKey, labelValue).endMetadata().done();
+        } catch (KubernetesClientException e) {
+            String message = "Error while adding label to kubernetes kind service with namespace : " + namespace;
+            log.error(message, e);
+            throw new RuntimeProvisioningException(message, e);
+        }
+    }
+
 }
