@@ -28,65 +28,86 @@ var server = carbon.server;
 var multitenancy = carbon.multitenancy;
 
 function login(userName, password, requestURL) {
-	var tenantDomain = SUPER_TENANT_DOMAIN_NAME;
-	if (userName.indexOf("@") != -1) {
-		tenantDomain = userName.substring(userName.lastIndexOf('@') + 1);
-	} else {	// else assume super tenant
-		tenantDomain = SUPER_TENANT_DOMAIN_NAME;
-	}
-	var ws = require('ws');
-	var context=multitenancy.getPrivilegedCarbonContext();
- 	var tenantManager= multitenancy.getTenantManager();
-	var finalResult={};
+    log.debug("Initializing login module");
+    var startTime_module = new Date().getTime();
+    var tenantDomain = SUPER_TENANT_DOMAIN_NAME;
+    if (userName.indexOf("@") != -1) {
+        tenantDomain = userName.substring(userName.lastIndexOf('@') + 1);
+    } else {	// else assume super tenant
+        tenantDomain = SUPER_TENANT_DOMAIN_NAME;
+    }
+    var ws = require('ws');
+    var context=multitenancy.getPrivilegedCarbonContext();
+    var tenantManager= multitenancy.getTenantManager();
+    var finalResult={};
 
-       // check whether given tenant domain is valid
-       try {
-           if (tenantManager.getTenantId(tenantDomain) == -1) {
-               finalResult.error = "true";
-               finalResult.message = "Authorization Failed.";
-               finalResult.username = userName;
-	        return stringify(finalResult);
-           }
-       } catch (e) {
-	    log.error("Error while get tenant Id user : " + userName);
-	    log.error(e);
-	    throw e;
+    // check whether given tenant domain is valid
+    try {
+       log.debug("Checking whether given tenant:" + tenantDomain + " is valid");
+       if (tenantManager.getTenantId(tenantDomain) == -1) {
+           finalResult.error = "true";
+           finalResult.message = "Authorization Failed.";
+           finalResult.username = userName;
+           log.debug("Failing authorization since given tenant:" + tenantDomain + " is not valid");
+        return stringify(finalResult);
        }
+    } catch (e) {
+        log.error("Error while get tenant Id user : " + userName);
+        log.error(e);
+        throw e;
+    }
 
-
-	try{
+    try{
+        log.debug("Starting tenant flow for tenant:" + tenantDomain);
+        var startTime_tenantFlow = new Date().getTime();
         context.startTenantFlow();
         context.getThreadLocalCarbonContext().setTenantId(tenantManager.getTenantId(tenantDomain));
         context.getThreadLocalCarbonContext().setTenantDomain(tenantDomain);
         context.getThreadLocalCarbonContext().setUsername(userName);
-		var result = server.Server.prototype.authenticate(userName,password);
-		if(result === true){
-		    var permission = modManager.getPropertyValue(jagg.findSelectedCloud(request.getRequestURL()) + LOGIN_PERMISSION);
+        var endTime_tenantFlow = new Date().getTime();
+        log.debug("Tenant flow started in :" + (endTime_tenantFlow-startTime_tenantFlow) + " milliseconds");
+        log. debug("Start authenticating user:" + userName + " in tenant:" + tenantDomain);
+        var startTime_authenticate = new Date().getTime();
+        var result = server.Server.prototype.authenticate(userName,password);
+        if(result === true){
+            var endTime_authenticate = new Date().getTime();
+            log.debug("Successfully authenticated user:" + userName + " in tenant:" + tenantDomain + " in:" +
+                                                    (endTime_authenticate - startTime_authenticate) + " milliseconds");
+            var startTime_authorize = new Date().getTime();
+            jagg.setSelectedCloud(request.getRequestURL());
+            var permission = modManager.getPropertyValue(jagg.getSelectedCloud() + LOGIN_PERMISSION);
             var isUserAuthorized = modManager.checkAuthorizationForUser(userName, permission);
             if (isUserAuthorized){
                 jagg.setUser(userName);
-                jagg.setSelectedCloud(requestURL);
                 finalResult.error="false";
                 finalResult.message="User successfully logged in";
                 finalResult.username=userName;
-			} else {
-			    finalResult.error="true";
-                           finalResult.message="Authorization Failed.";
-                           finalResult.username=userName;
-			}
-		}else{
-			finalResult.error="true";
-			finalResult.message="Authenitcation Failed.";
-                       finalResult.username=userName;
-		}
-		return stringify(finalResult);
-	} catch(e){
-		log.error("Error while authenticating user : " + userName);
-		log.error(e);
-		throw e;
-	} finally {
-	    context.endTenantFlow();
-	}
+                var endTime_authorize = new Date().getTime();
+                log.debug("Successfully authorized user:" + userName + " in tenant:" + tenantDomain + " in:" +
+                                                           (endTime_authorize - startTime_authorize) + " milliseconds");
+            } else {
+                finalResult.error="true";
+                finalResult.message="Authorization Failed.";
+                finalResult.username=userName;
+                log.debug("Authorization failed for user:" + userName + " in tenant:" + tenantDomain);
+                session.invalidate();
+            }
+        }else{
+            finalResult.error="true";
+            finalResult.message="Authentication Failed.";
+            finalResult.username=userName;
+            log.debug("Authentication failed for user:" + userName + " in tenant:" + tenantDomain);
+        }
+        var endTime_module = new Date().getTime();
+        log.debug("Finishing login module in:" + (endTime_module - startTime_module) + " milliseconds");
+        return stringify(finalResult);
+    } catch(e){
+        log.error("Error while authenticating user : " + userName);
+        log.error(e);
+        throw e;
+    } finally {
+        context.endTenantFlow();
+    }
 }
 
 function logout(){

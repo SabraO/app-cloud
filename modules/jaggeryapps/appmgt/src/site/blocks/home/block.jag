@@ -55,7 +55,11 @@ jagg.block("home", {
         var pageTitle = managerModule.getCloudTypeProperties().pageTitle;
         var maxAppCount = applicationModule.getMaxInstanceCount();
         var applicationCount = applicationModule.getRunningApplicationVersionCount();
-        var cloudSpecificApplicationRepresentation = jagg.module("manager").getCloudTypeProperties().cloudSpecificApplicationRepresentation;
+        var cloudSpecificApplicationRepresentation = managerModule.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
+
+        var requestNewAppTypeSubjectMessage = 'Requesting to keep application: '+application.applicationName+' running for an extended period of time in tenant: ' + managerModule.getTenantDomain();
+        var requestNewAppTypeURL = managerModule.getPropertyValue(managerModule.getCloudTypeProperties().properties.supportUrl) +
+                '&subject=' + requestNewAppTypeSubjectMessage;
 
         return {
             "application" : application,
@@ -68,6 +72,7 @@ jagg.block("home", {
             "applicationCount" : applicationCount,
             "maxAppCount" : maxAppCount,
             "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation,
+            "requestNewAppTypeURL" : requestNewAppTypeURL
         };
     }
 

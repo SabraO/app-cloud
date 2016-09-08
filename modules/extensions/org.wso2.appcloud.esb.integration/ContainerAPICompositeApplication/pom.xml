@@ -136,7 +136,7 @@
         <repository>
             <releases>
                 <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
+                <updatePolicy>never</updatePolicy>
                 <checksumPolicy>ignore</checksumPolicy>
             </releases>
             <id>wso2-nexus</id>

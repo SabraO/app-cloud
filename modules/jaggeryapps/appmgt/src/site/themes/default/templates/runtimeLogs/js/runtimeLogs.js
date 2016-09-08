@@ -114,21 +114,21 @@ function initData(selectedRevision, isFirstRequest){
                 if (revisionStatus == APPLICATION_STOPPED) {
                     clearInterval(timerId);
                     jagg.message({
-                        content: "The application is currently stopped. Please restart the application to see its logs.",
+                        content: "The " + cloudSpecificApplicationRepresentation.toLowerCase() + " is currently stopped. Please restart the " + cloudSpecificApplicationRepresentation.toLowerCase()+ " to see its logs.",
                         type: 'information',
                         id: 'view_log',
                         timeout: '20000'
                     });
-                    setLogArea("Logs are unavailable as the application is stopped.", true);
+                    setLogArea("Logs are unavailable as the " + cloudSpecificApplicationRepresentation.toLowerCase() + " is stopped.", true);
                 } else if (revisionStatus == APPLICATION_INACTIVE) {
                     clearInterval(timerId);
                     jagg.message({
-                        content: "The application is stopped due to inactivity. Please restart it to see its logs.",
+                        content: "The " + cloudSpecificApplicationRepresentation.toLowerCase() + " is stopped due to inactivity. Please restart it to see its logs.",
                         type: 'information',
                         id: 'view_log',
                         timeout: '20000'
                     });
-                    setLogArea("Logs are unavailable as the application is stopped..", true);
+                    setLogArea("Logs are unavailable as the " + cloudSpecificApplicationRepresentation.toLowerCase() + " is stopped..", true);
                 } else {
                     clearInterval(timerId);
                     jagg.message({
@@ -140,7 +140,7 @@ function initData(selectedRevision, isFirstRequest){
                 }
             }, function(jqXHR, textStatus, errorThrown) {
                 jagg.message({
-                    content: "An error occurred while getting the application revision's status.",
+                    content: "An error occurred while getting the " + cloudSpecificApplicationRepresentation.toLowerCase() + " revision's status.",
                     type: 'error',
                     id: 'view_log'
                 });

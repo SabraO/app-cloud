@@ -360,7 +360,6 @@ a.btn-action {
     height: 36px;
 }
 .inner-wrapper {
-    min-height: 100%;
     height: auto !important;
     height: 100%;
     margin: 0 auto -36px;
@@ -887,15 +886,16 @@ a.btn-action {
     background-color: #005578
 }
 .right-pane {
+    left: 15%;
     position: absolute;
-    width: 100%;
+    width: 85%;
 }
 .left-pane {
     position: fixed;
-    width: 18em;
+    width: 15%;
     z-index: 100;
     background-color: #222222;
-    left: -18em;
+    left: 0em;
     top: 53px;
     min-height: 100%;
     overflow-y: auto;
@@ -2565,7 +2565,7 @@ th.hide-column-data, td.hide-column-data {
 .div-search {
     padding: 31px 25px 5px;
     background-color: #5F5F5F;
-    margin: -15px;
+    margin-bottom: -15px;
 }
 
 .highlight {

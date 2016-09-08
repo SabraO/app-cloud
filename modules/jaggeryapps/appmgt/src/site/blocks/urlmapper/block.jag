@@ -32,9 +32,12 @@ jagg.block("urlmapper", {
         var application = applicationModule.getApplication(inputs.applicationKey);
         var defaultHostName = applicationModule.constructDefaultAppLaunchURL(application.applicationName);
 
+        var modManager = jagg.module("manager");
+        var cloudSpecificApplicationRepresentation = modManager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
         return {
             "application": application,
-            "defaultHostName": defaultHostName
+            "defaultHostName": defaultHostName,
+            "cloudSpecificApplicationRepresentation":cloudSpecificApplicationRepresentation
         };
     }
 

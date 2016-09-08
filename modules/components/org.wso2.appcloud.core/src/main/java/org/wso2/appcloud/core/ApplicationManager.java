@@ -86,7 +86,7 @@ public class ApplicationManager {
             ApplicationDAO.getInstance().addVersion(dbConnection, version, applicationId, tenantId);
             dbConnection.commit();
         } catch (AppCloudException e) {
-            String msg = "Error while adding application version for application id : " + applicationHashId +
+            String msg = "Error while adding application version for application hash id : " + applicationHashId +
                     "and version :" + version.getVersionName() + " for tenant id : " + tenantId;
             log.error(msg, e);
             throw new AppCloudException(msg, e);
@@ -1300,6 +1300,77 @@ public class ApplicationManager {
             return cloudTypes.toArray(new String[cloudTypes.size()]);
         } catch (AppCloudException e) {
             String msg = "Error while retrieving cloud types from database";
+            log.error(msg, e);
+            throw new AppCloudException(msg, e);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
+
+    /**
+     * Method to check if given environment variable exists
+     *
+     * @param versionKey     version hash id
+     * @param envVariableKey environment variable key
+     * @return if the environment variable exists or not
+     * @throws AppCloudException
+     */
+    public static boolean isEnvironmentVariableExist(String versionKey, String envVariableKey)
+            throws AppCloudException {
+        Connection dbConnection = DBUtil.getDBConnection();
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+        try {
+            return ApplicationDAO.getInstance().
+                    isEnvironmentVariableExist(dbConnection, versionKey, envVariableKey, tenantId);
+        } catch (AppCloudException e) {
+            String msg = "Error while checking if environment variable exists for version hash id: " + versionKey +
+                    " and tenant id: " + tenantId + ".";
+            log.error(msg, e);
+            throw new AppCloudException(msg, e);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
+
+    /**
+     * Method to check if given tag exists
+     *
+     * @param versionKey version hash id
+     * @param tagKey     tag key
+     * @return if the tag exists or not
+     * @throws AppCloudException
+     */
+    public static boolean isTagExist(String versionKey, String tagKey) throws AppCloudException {
+        Connection dbConnection = DBUtil.getDBConnection();
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+        try {
+            return ApplicationDAO.getInstance().isTagExist(dbConnection, versionKey, tagKey, tenantId);
+        } catch (AppCloudException e) {
+            String msg = "Error while checking if tag exists for version hash id: " + versionKey +
+                    " and tenant id: " + tenantId + ".";
+            log.error(msg, e);
+            throw new AppCloudException(msg, e);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
+
+    /**
+     * Method to check if the given version exists in the applications version list
+     *
+     * @param applicationName application name
+     * @param versionName     version name
+     * @return if the given version exists or not
+     * @throws AppCloudException
+     */
+    public static boolean isVersionExist(String applicationName, String versionName) throws AppCloudException {
+        Connection dbConnection = DBUtil.getDBConnection();
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+        try {
+            return ApplicationDAO.getInstance().isVersionExist(dbConnection, applicationName, versionName, tenantId);
+        } catch (AppCloudException e) {
+            String msg = "Error while checking if version exists for application name: " + applicationName +
+                    " version name: " + versionName + " and tenant id: " + tenantId + ".";
             log.error(msg, e);
             throw new AppCloudException(msg, e);
         } finally {

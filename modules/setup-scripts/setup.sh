@@ -124,6 +124,7 @@ function as_setup(){
     cp $LIB_LOCATION/jackson-dataformat-yaml-2.7.3.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/slf4j-api-1.7.12.wso2v1.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/snakeyaml-1.15.jar $1/repository/components/dropins/
+    cp $SS_HOME/repository/components/plugins/org.wso2.carbon.rssmanager.common_4.2.0.jar $1/repository/components/dropins/
 
     cp $LIB_LOCATION/mysql-connector-java-5.1.27-bin.jar $1/repository/components/lib/
 

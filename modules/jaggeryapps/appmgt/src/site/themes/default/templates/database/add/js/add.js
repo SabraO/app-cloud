@@ -412,7 +412,7 @@ function addNewDatabase() {
             }
         }, function (jqXHR, textStatus, errorThrown) {
             jagg.message({
-                content: 'Error occurred while creating database',
+                content: jqXHR.responseText,
                 type: 'error',
                 id: 'databasecreation',
                 timeout: 8000

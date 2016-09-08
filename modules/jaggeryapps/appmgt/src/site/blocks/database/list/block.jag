@@ -40,9 +40,13 @@ jagg.block("database/list", {
         } catch (e) {
             isSSRunning = false;
         }
+
+        var modManager = jagg.module("manager");
+        var cloudSpecificApplicationRepresentation = modManager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
         return {
             "hasDBs":hasDBs,
-            "isSSRunning":isSSRunning
+            "isSSRunning":isSSRunning,
+            "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation
         };
     }
 

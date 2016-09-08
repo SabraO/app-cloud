@@ -70,7 +70,7 @@ function stripedUrl(url){
 }
 
 function verifyCustomUrlSuccess() {
-    jagg.message({content: "The custom domain was successfully added to the application.", type: 'success', id: 'view_log'});
+    jagg.message({content: "The custom domain was successfully added to the " + cloudSpecificApplicationRepresentation.toLowerCase() + ".", type: 'success', id: 'view_log'});
     uiElementStateChange(true, true, true);
     showUpdateButton();
     $('#updateCustomUrl').prop('disabled', false);

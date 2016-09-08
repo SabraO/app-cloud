@@ -159,7 +159,7 @@ var pushDockerImage = function (applicationName, versionName, applicationRuntime
 var buildDockerImage = function (applicationName, versionName, runtimeId, absFileUploadedPath, applicationRuntime, tagName, versionHashId, dockerClient){
 
     //Adding docker build pending event
-    var msg = "Docker image build successfully triggered in appcloud";
+    var msg = "Docker image build successfully triggered";
     addEvent(DOCKER_IMAGE_BUILD, EVENT_PENDING, msg, versionHashId);
     if (log.isDebugEnabled()) {
         log.debug("Start building docker image for version:" + versionHashId);
@@ -204,7 +204,7 @@ var buildDockerImage = function (applicationName, versionName, runtimeId, absFil
 
         log.error(msg);
         log.error(e);
-        log.info("Application creation failed because dokcer image build failed and roll back process" +
+        log.warn("Application creation failed because dokcer image build failed and roll back process" +
                  " is started for application : "+applicationName+" with revision : "+versionName);
         deleteVersion(versionHashId, true, false);
         throw e;
@@ -265,9 +265,9 @@ var createAppInDataBase = function(applicationName, versionName, applicationDesc
         var msg = "Error while adding application : " + applicationName + " with version : "+ versionName + " to database";
         log.error(msg);
         log.error(e);
-        log.info("Application creation failed due to initial application metadata persistence failure and roll back process" +
+        log.warn("Application creation failed due to initial application metadata persistence failure and roll back process" +
                  " is started for application : "+applicationName+" with version : "+ versionName);
-        //Not deleting the uploaded artifact, we need to handle the retry logic
+        //Not deleting the uploaded artifact, in the retry option we need previously uploaded artifact to exist.
         throw e;
     }
     return application;
@@ -307,7 +307,7 @@ var createAppVersionInDataBase = function( versionName,   runtimeId, runtimeProp
 
 var createDockerFile = function (applicationName, versionName, appTypeName, runtimeId, uploadedFileName, versionHashId, dockerClient,
                                  artifactUrl, hostName, appCreationMethod, runtimeProperties, conSpecMemory) {
-    var msg = "Docker file creation successfully triggered in AppCloud";
+    var msg = "Docker file creation successfully triggered";
     addEvent(DOCKER_FILE_CREATE, EVENT_PENDING, msg, versionHashId);
     if (log.isDebugEnabled()) {
         log.debug("Start creating docker file for version:" + versionHashId);
@@ -339,7 +339,7 @@ var createDockerFile = function (applicationName, versionName, appTypeName, runt
         dockerFilePropertyMap.put("VAL_TOTAL_MEMORY", conSpecMemory);
 
         var mod = jagg.module("application");
-        mod.getEndpointsExtractor(appTypeName).setDockerEnvironmentVariables(dockerFilePropertyMap);
+        mod.getAppTypeUtil(appTypeName).setDockerEnvironmentVariables(dockerFilePropertyMap);
 
         var appRuntimeProperties = getRuntimeProperties(runtimeProperties);
         dockerClient.createDockerFile(dockerFilePath, runtimeId, dockerTemplateFilePath, appCreationMethod, dockerFilePropertyMap, appRuntimeProperties);
@@ -384,7 +384,7 @@ var deployApplication = function(applicationName, versionName, appTypeName, depl
         }
     } else {
         conSpecMemory = conSpecMemoryLimit;
-        conSpecCpu = conSpecMemoryLimit;
+        conSpecCpu = conSpecCpuLimit;
     }
 
     var resourceQuotaLimit = new ResourceQuotaLimit();
@@ -1699,24 +1699,14 @@ var getAllowedContainerSpecificationsForRuntime = function(runtimeID) {
  }
 
 var isEnvironmentVariableExist = function(versionKey, envVariableKey) {
-    var envVariables = getEnvVariablesOfVersion(versionKey);
-
-    for (var i = 0; i < envVariables.length; i++) {
-        if (envVariables[i]["key"] == envVariableKey) {
-            return true;
-        }
-    }
-    return false;
+    return ApplicationManager.isEnvironmentVariableExist(versionKey, envVariableKey);
 }
 
 var isTagExist = function(versionKey, tagKey) {
-    var tags = getTags(versionKey);
+    return ApplicationManager.isTagExist(versionKey, tagKey);
+}
 
-    for (var i = 0; i < tags.length; i++) {
-        if (tags[i]["key"] == tagKey) {
-            return true;
-        }
-    }
-    return false;
+var isVersionExist = function(applicationName, versionName) {
+    return ApplicationManager.isVersionExist(applicationName, versionName);
 }
 %>

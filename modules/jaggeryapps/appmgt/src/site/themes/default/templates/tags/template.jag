@@ -24,6 +24,7 @@ jagg.template("tags", function(inputs, outputs, jagg) {
     var versionKey = request.getParameter("versionKey");
     var applicationRevision = request.getParameter("revision");
     var selectedRevision = outputs.selectedRevision;
+    var cloudSpecificApplicationRepresentation = outputs.cloudSpecificApplicationRepresentation;
 
     %>
      <!-- Bootstrap -->
@@ -34,14 +35,14 @@ jagg.template("tags", function(inputs, outputs, jagg) {
       <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/styles.css'))%>">
 
  <!-- right pane wrapper -->
- <div class="right-pane">
+ <div class="right-pane visible">
 
     <div class="action-bar">
-        <a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to Application">
+        <a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to <%=cloudSpecificApplicationRepresentation%>">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-left-arrow fw-stack-1x"></i>
-                </span> <span class="hidden-xs">Back to Application</span>
+                </span> <span class="hidden-xs">Back to <%=cloudSpecificApplicationRepresentation%></span>
         </a>
         <a class="btn-action add-tag" data-toggle="tooltip" data-placement="top" title="Add Tag">
                 <span class="fw-stack fw-lg btn-action-ico">
@@ -53,7 +54,7 @@ jagg.template("tags", function(inputs, outputs, jagg) {
     <div class="container-fluid app-content-section">
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 msg-issues">
-                This allows you to add tags to identify your application revisions. eg. Stage=Development, Version:1.0.0
+                This allows you to add tags to identify your <%=cloudSpecificApplicationRepresentation.toLowerCase()%> revisions. eg. Stage=Development, Version:1.0.0
             </div>
         </div>
         <div class="tag-list">

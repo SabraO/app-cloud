@@ -183,15 +183,15 @@ jagg.template("index", function(inputs, outputs, jagg) {
             action:"deleteApplication",
             applicationKey:applicationHashId
         },function (result) {
-            jagg.message({content: 'Application: ' + appName + ' was deleted successfully.', type: 'success', id:'view_log'});
+            jagg.message({content: cloudSpecificApplicationRepresentation + ': ' + appName + ' was deleted successfully.', type: 'success', id:'view_log'});
             setTimeout(redirectAppListing, 2000);
         },function (jqXHR, textStatus, errorThrown) {
-            jagg.message({content: "An error occurred while deleting the application : " + appName, type: 'error', id:'view_log'});
+            jagg.message({content: "An error occurred while deleting the " + cloudSpecificApplicationRepresentation.toLowerCase() + " : " + appName, type: 'error', id:'view_log'});
         });
     }
 
     function deleteApplicationPopUp(appName, applicationHashId){
-        jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete Application',content:'Are you sure you want to delete ' + appName + ' ?',
+        jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete ' + cloudSpecificApplicationRepresentation,content:'Are you sure you want to delete ' + appName + ' ?',
             okCallback:function(){
                deleteApplicationAllVersions(appName, applicationHashId);
             }, cancelCallback:function(){}

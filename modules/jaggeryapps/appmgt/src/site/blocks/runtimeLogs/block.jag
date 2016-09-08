@@ -43,12 +43,15 @@ jagg.block("runtimeLogs", {
                 selectedRevision = revisionsList[0];
             }
         }
+        var modManager = jagg.module("manager");
+        var cloudSpecificApplicationRepresentation = modManager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
         return {
             "viewRuntimeLogPermission": viewRuntimeLogPermission,
             "applicationKey": applicationKey,
             "selectedRevision": selectedRevision,
             "revisionsList":revisionsList,
-            "versionKey":versionKey
+            "versionKey":versionKey,
+            "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation
         };
     }
 

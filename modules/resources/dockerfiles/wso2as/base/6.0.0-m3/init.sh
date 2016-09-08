@@ -62,6 +62,9 @@ sed -i "s/unpackWARs=\"true\"/unpackWARs=\"false\"/g" $TOMCAT_HOME_DIR/conf/serv
 
 sed -i "/\/Host/i  \\\t<Context path=\"""\" docBase=\"$APP_WAR\" debug=\"0\" reloadable=\"true\"></Context>" $TOMCAT_HOME_DIR/conf/server.xml
 
+# enable jaggery environment
+sed -i "s/.*<environments>CXF<\/environments>.*/<environments>CXF,jaggery<\/environments>/" $TOMCAT_HOME_DIR/conf/wso2/wso2as-web.xml
+
 #Check whether JAVA_OPTS env variable is defined and is not empty
 if [[ $JAVA_OPTS && ${JAVA_OPTS-_} ]]; then
 	export JAVA_OPTS=$JAVA_OPTS

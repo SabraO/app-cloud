@@ -50,6 +50,8 @@ jagg.block("header/default", {
         var integrationCloudURL = manager.getPropertyValue(INTEGRATION_CLOUD_URL);
         var apiCloudPublisherURL = manager.getPropertyValue(API_CLOUD_PUBLISHER__URL);
         var cloudMgtURL = manager.getPropertyValue(CLOUD_MGT_URL);
+        var changePasswordURL = manager.getPropertyValue(CHANGE_PASSWORD_URL);
+        var profileURL = manager.getPropertyValue(PROFILE_URL);
 
         return {
             "user": user,
@@ -64,7 +66,9 @@ jagg.block("header/default", {
             "integrationCloudURL" : integrationCloudURL,
             "apiCloudPublisherURL" : apiCloudPublisherURL,
             "cloudMgtURL" : cloudMgtURL,
-            "cloudIcon" : cloudIcon
+            "cloudIcon" : cloudIcon,
+            "changePasswordURL" : changePasswordURL,
+            "profileURL" : profileURL
         };
     }
 });

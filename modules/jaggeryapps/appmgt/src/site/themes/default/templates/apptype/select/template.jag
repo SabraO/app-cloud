@@ -21,6 +21,8 @@ include("/jagg/jagg.jag");
 
 jagg.template("apptype/select", function(inputs, outputs, jagg) {
     var appTypes = outputs.appTypes;
+    var requestNewAppTypeURL = outputs.requestNewAppTypeURL;
+    var cloudSpecificApplicationRepresentation = outputs.cloudSpecificApplicationRepresentation;
      %>
 
     <div class="action-bar">
@@ -28,7 +30,13 @@ jagg.template("apptype/select", function(inputs, outputs, jagg) {
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-left-arrow fw-stack-1x"></i>
-                </span> <span class="hidden-xs">Back to Application listing</span>
+                </span> <span class="hidden-xs">Back to <%=cloudSpecificApplicationRepresentation%> listing</span>
+        </a>
+        <a href="<%=requestNewAppTypeURL%>" class="btn-action" target="_blank">
+                <span class="fw-stack fw-lg btn-action-ico">
+                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+                    <i class="fw fw-mail fw-stack-1x"></i>
+                </span> <span class="hidden-xs">Request new <%=cloudSpecificApplicationRepresentation%> Type</span>
         </a>
     </div>
     <div class="container-fluid app-type-listing">

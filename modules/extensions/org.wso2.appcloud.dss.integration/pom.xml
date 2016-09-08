@@ -22,13 +22,12 @@
         <groupId>org.wso2.appcloud</groupId>
         <artifactId>appcloud-parent</artifactId>
         <version>3.0.0-SNAPSHOT</version>
-        <relativePath>../../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.appcloud.dss.integration</groupId>
     <artifactId>org.wso2.appcloud.dss.integration</artifactId>
-    <name>WSO2 AppCloud Components - DSS Integration</name>
+    <name>WSO2 AppCloud Extensions - DSS Integration</name>
 
     <dependencies>
         <dependency>

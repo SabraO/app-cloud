@@ -22,14 +22,13 @@
         <groupId>org.wso2.appcloud</groupId>
         <artifactId>appcloud-parent</artifactId>
         <version>3.0.0-SNAPSHOT</version>
-        <relativePath>../../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.appcloud.tenant.initializer</groupId>
     <artifactId>org.wso2.appcloud.tenant.initializer</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 AppCloud Components - Tenant Initializer</name>
+    <name>WSO2 AppCloud Extensions - Tenant Initializer</name>
 
     <dependencies>
         <dependency>

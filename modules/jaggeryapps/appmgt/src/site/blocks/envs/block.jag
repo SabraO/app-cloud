@@ -33,8 +33,11 @@ jagg.block("envs", {
         if (!selectedRevision && application.defaultVersion) {
             selectedRevision = application.defaultVersion;
         }
+        var modManager = jagg.module("manager");
+        var cloudSpecificApplicationRepresentation = modManager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
         return {
-            "selectedRevision": selectedRevision
+            "selectedRevision": selectedRevision,
+            "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation
         };
     }
 

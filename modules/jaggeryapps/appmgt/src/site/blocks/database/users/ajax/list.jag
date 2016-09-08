@@ -42,13 +42,28 @@ var result = {};
         }
         
       
-	}else if (action == "createDatabaseUser") {
+	} else if (action == "createDatabaseUser") {
 	    mod = jagg.module("databases");
 		var password = request.getParameter("password");
 		var username = request.getParameter("username");
 
+        var isDatabaseUserExists;
         try {
-            var dbUser = mod.createDatabaseUser(username, password );
+            isDatabaseUserExists = mod.isDatabaseUserExists(username);
+        } catch (e) {
+            var msg = "Error while checking  existance for database : " + username;
+            log.error(msg);
+            log.error(e);
+            isDatabaseUserExists = false;
+        }
+        if(isDatabaseUserExists){
+            response.status = 500;
+            response.content = "Database user already exists";
+            return;
+        }
+
+        try {
+            var dbUser = mod.createDatabaseUser(username, password);
             var result = {};
             result.value = "success";
             result.userName = dbUser;
@@ -59,17 +74,30 @@ var result = {};
             log.error(e);
 
             var responseMsg = "Error while creating database user : " + username;
-            response.status=400;
+            response.status = 400;
             // get the cause message from exception itself to make user friendly message
             var errorMsg = new String(e.javaException.cause);
             var actualCause = getActualCause(errorMsg);
             // This is a hack to identify whether the error occurred due to an existing user
             var alreadyExistsPattern = /already exists/ig;
             if(alreadyExistsPattern.test(actualCause)){
-                responseMsg = "Database user '"+username+"' already exists"
+                responseMsg = "Database user '" + username + "' already exists"
             }
             response.content = responseMsg;
         }
+
+	} else if(action == "isDatabaseUserExists"){
+        var username = request.getParameter("username");
+        try {
+            result = mod.isDatabaseUserExists(username);
+            print(result);
+        } catch (e) {
+            var msg = "Error while checking  existance for database user : " + username;
+            log.error(msg);
+            log.error(e);
+            print("false");
+        }
+
 	}  else {
 		throw new Error("No action specified");
 	}

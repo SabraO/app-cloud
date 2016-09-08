@@ -30,6 +30,7 @@ jagg.template("runtimeLogs", function (inputs, outputs, jagg) {
     // currently selected revision
     // ex: "1.0.0"
     var selectedRevision = outputs.selectedRevision;
+    var cloudSpecificApplicationRepresentation = outputs.cloudSpecificApplicationRepresentation;
 
 %>
 <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/CodeMirror-5.7.0/codemirror.css'))%>">
@@ -42,18 +43,19 @@ jagg.template("runtimeLogs", function (inputs, outputs, jagg) {
     var APPLICATION_STOPPED = "<%=APPLICATION_STOPPED%>";
     var APPLICATION_RUNNING = "<%=APPLICATION_RUNNING%>";
     var APPLICATION_INACTIVE = "<%=APPLICATION_INACTIVE%>";
+    var cloudSpecificApplicationRepresentation = "<%=cloudSpecificApplicationRepresentation%>";
 </script>
 
    <!-- right pane wrapper -->
- <div class="right-pane">
+ <div class="right-pane visible">
 
         <!-- BOF App factory menu actionbar -->
         <div class="action-bar">
-            <a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to Application">
+            <a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to <%=cloudSpecificApplicationRepresentation%>">
                     <span class="fw-stack fw-lg btn-action-ico">
                         <i class="fw fw-circle-outline fw-stack-2x"></i>
                         <i class="fw fw-left-arrow fw-stack-1x"></i>
-                    </span> <span class="hidden-xs">Back to Application</span>
+                    </span> <span class="hidden-xs">Back to <%=cloudSpecificApplicationRepresentation%></span>
             </a>
             <a class="btn-action" data-toggle="tooltip" data-placement="top" title="Download Logs" id="log-download">
                     <span class="fw-stack fw-lg btn-action-ico">
@@ -66,7 +68,7 @@ jagg.template("runtimeLogs", function (inputs, outputs, jagg) {
         <div class="container-fluid app-content-section">
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 msg-issues">
-                    Download the logs of the deployed applications that are archived daily.
+                    Download the logs of the deployed <%=cloudSpecificApplicationRepresentation.toLowerCase()%>s that are archived daily.
                 </div>
             </div>
             <div class="row">

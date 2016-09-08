@@ -84,6 +84,9 @@ var APP_CLOUD_HOSTNAME = "AppCloud.Hostname";
 var INTEGRATION_CLOUD = "integration-cloud";
 var INTEGRATION_CLOUD_HOSTNAME = "IntegrationCloud.Hostname";
 
+var PROFILE_URL = "Profile.Url";
+var CHANGE_PASSWORD_URL = "ChangePassword.Url";
+
 //Regex patterns
 var ENV_KEY_REGEX = "^[A-Za-z0-9_]+$";
 %>

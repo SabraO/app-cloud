@@ -120,17 +120,18 @@
             ssoRelyingParty.setSessionAuthenticated(sessionId, samlResponse);
             var userName = ssoRelyingParty.getLoggedInUser(sessionId);
             var modManager = jagg.module("manager");
-            var permission = modManager.getPropertyValue(jagg.findSelectedCloud(request.getRequestURL()) + LOGIN_PERMISSION);
+            jagg.setSelectedCloud(request.getRequestURL());
+            var permission = modManager.getPropertyValue(jagg.getSelectedCloud() + LOGIN_PERMISSION);
             var isUserAuthorized = modManager.checkAuthorizationForUser(userName, permission);
             if(isUserAuthorized){
                 jagg.setUser(userName);
-                jagg.setSelectedCloud(request.getRequestURL());
                 var email = modManager.getEmailAddressForUser(userName);
                 modManager.setUserEmailAddress(email);
                 session.put("LOGGED_IN_USER", ssoRelyingParty.getLoggedInUser(sessionId));
                 audit.info("User : " + jagg.getUser() + ", Action : login");
                 response.sendRedirect("/appmgt/site/pages/index.jag");
             } else {
+                session.invalidate();
                 response.sendRedirect("/appmgt/site/pages/error-pages/401.html");
             }
             return;

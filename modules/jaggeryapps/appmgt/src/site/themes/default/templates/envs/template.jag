@@ -24,6 +24,7 @@ jagg.template("envs", function(inputs, outputs, jagg) {
     var versionKey = request.getParameter("versionKey");
     var applicationKey = request.getParameter("applicationKey");
     var selectedRevision = outputs.selectedRevision;
+    var cloudSpecificApplicationRepresentation = outputs.cloudSpecificApplicationRepresentation;
 %>
 
       <!-- Bootstrap -->
@@ -36,14 +37,14 @@ jagg.template("envs", function(inputs, outputs, jagg) {
 
 
  <!-- right pane wrapper -->
- <div class="right-pane">
+ <div class="right-pane visible">
     <!-- BOF App factory menu actionbar -->
     <div class="action-bar">
-        <a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to Application">
+        <a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to <%=cloudSpecificApplicationRepresentation%>">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-left-arrow fw-stack-1x"></i>
-                </span> <span class="hidden-xs">Back to Application</span>
+                </span> <span class="hidden-xs">Back to <%=cloudSpecificApplicationRepresentation%></span>
         </a>
         <a class="btn-action add-env" data-toggle="tooltip" data-placement="top" title="Add Environment Variable">
                 <span class="fw-stack fw-lg btn-action-ico">
@@ -58,7 +59,7 @@ jagg.template("envs", function(inputs, outputs, jagg) {
 
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 msg-issues">
-                This allows you to set environment variables that are used in your application. To add database-specific environment variables, type <b>database:</b> in the Value textbox.
+                This allows you to set environment variables that are used in your <%=cloudSpecificApplicationRepresentation.toLowerCase()%>. To add database-specific environment variables, type <b>database:</b> in the Value textbox.
             </div>
         </div>
         <div class="env-list">
@@ -70,6 +71,7 @@ jagg.template("envs", function(inputs, outputs, jagg) {
 </div>
 <script >
 $(document).ready(function() {
+    var cloudSpecificApplicationRepresentation = '<%=cloudSpecificApplicationRepresentation%>';
     var prevKey, prevValue;
     jagg.post("../blocks/application/application.jag", {
         action: "getEnvVariablesOfVersion",
@@ -254,14 +256,14 @@ $(document).ready(function() {
                 versionKey: '<%=versionKey%>',
                 key: updatedKey,
             }, function (result) {
-                if (result && result.trim() == "true") {
+                var isNewAddition = element.hasClass('save-new-entry');
+                if ((isNewAddition || (prevKey && prevKey != updatedKey)) && result && result.trim() == "true") {
                     jagg.message({
                         content: "Environmental variable with key : " + updatedKey + " already exists.",
                         type: 'error'
                     });
                     return;
                 }
-                var isNewAddition = element.hasClass('save-new-entry');
                 if (isNewAddition) {
                     addRuntimeAttribute(updatedKey, updatedValue);
                     element.removeClass('save-new-entry');
@@ -352,7 +354,7 @@ $(document).on('click', '.panel-heading a', function (e) {
 
 function displayAppRedeployNotification() {
     jagg.message({
-        content: "Please redeploy the application for the updated runtime variables to take effect.",
+        content: "Please redeploy the " + cloudSpecificApplicationRepresentation.toLowerCase() + " for the updated runtime variables to take effect.",
         type: 'info'
     });
 }

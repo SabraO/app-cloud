@@ -41,6 +41,21 @@ var databaseModule = jagg.module("databases");
         var isBasic = request.getParameter("isBasic");
         var respObj = {};
 
+        var isDatabaseExists;
+        try {
+            isDatabaseExists = mod.isDatabaseExists(databaseName);
+        } catch (e) {
+            var msg = "Error while checking  existence for database : " + databaseName;
+            log.error(msg);
+            log.error(e);
+            isDatabaseExists = false;
+        }
+        if(isDatabaseExists){
+            response.status = 500;
+            response.content = "Database already exists";
+            return;
+        }
+
         try{
             var databaseCount = databaseModule.getDatabaseCount();
             var maxDatabases = databaseModule.getMaxDatabaseCount();
@@ -92,7 +107,19 @@ var databaseModule = jagg.module("databases");
             throw e;
         }
 
-    }else if(action == "detachUser"){
+	} else if(action == "isDatabaseExists"){
+        var dbname = request.getParameter("databaseName");
+        try {
+            result = mod.isDatabaseExists(dbname);
+            print(result);
+        } catch (e) {
+            var msg = "Error while checking  existance for database : " + dbname;
+            log.error(msg);
+            log.error(e);
+            print("false");
+        }
+
+    } else if(action == "detachUser"){
 		var dbname = request.getParameter("databaseName");
 		var username = request.getParameter("username");
 		try {

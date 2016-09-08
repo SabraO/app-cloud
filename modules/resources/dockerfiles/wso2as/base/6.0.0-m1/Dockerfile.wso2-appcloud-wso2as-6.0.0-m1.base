@@ -26,7 +26,6 @@ ENV INSTALL_PATH /home/wso2user/
 #ENV PATH $PATH:$CATALINA_HOME/bin
 ENV ADMIN_PASS ""
 ENV CERT_PASS ""
-ENV JAVA_OPTS="-Xms128m -Xmx256m -XX:MaxMetaspaceSize=256m"
 
 # Add the startup script
 ADD init.sh /init.sh
@@ -37,10 +36,8 @@ ADD wso2carbon.jks /wso2carbon.jks
 # line 4-9. Get and unpack Tomcat
 # line 10. Make a copy of the webapps folder, in case an empty or non-existent host
 # folder is specified for the (webapps) volume.
-RUN apk update && apk add pwgen wget openjdk8 && \
+RUN apk update && apk add pwgen wget && \
     addgroup wso2 && adduser -g '' -s /bin/bash -D -G wso2 wso2user
-
-ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/jre/
 
 USER wso2user
 

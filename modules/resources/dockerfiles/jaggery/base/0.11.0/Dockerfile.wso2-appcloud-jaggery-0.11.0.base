@@ -22,15 +22,12 @@ FROM anapsix/alpine-java:8_server-jre_unlimited
 
 ENV WSO2AS_ZIP wso2as-5.3.0.zip
 ENV INSTALL_PATH /home/wso2user/
-ENV JAVA_OPTS="-Xms128m -Xmx300m -XX:MaxMetaspaceSize=128m"
 ENV ADMIN_PASS ""
 ENV WSO2_AS_VERSION 5.3.0
 
 RUN apk update && \
-    apk add --no-cache pwgen git wget openjdk8 && \
+    apk add --no-cache pwgen git wget && \
     addgroup wso2 && adduser -g '' -s /bin/bash -D -G wso2 wso2user
-
-ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/jre/
 
 USER wso2user
 

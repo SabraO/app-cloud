@@ -120,7 +120,7 @@ function loadEndpoints(deploymentURL, applicationType, versionId) {
      versionId: versionId
      }, function(result) {
         var endpoints = JSON.parse(result);
-        if (endpoints == undefined) {
+        if (endpoints == null) {
             showLoadingEndpointView();
         } else {
             // Generate SOAP Services Section
@@ -244,21 +244,21 @@ function displayMessage() {
                 modalStatus: true,
                 type: 'warning',
                 timeout: 3000,
-                content: "<b>The application has been stopped. Start the application before launching it.</b>"
+                content: "<b>The " + cloudSpecificApplicationRepresentation.toLowerCase() + " has been stopped. Start the " + cloudSpecificApplicationRepresentation.toLowerCase() + " before launching it.</b>"
             });
         } else if (selectedApplicationRevision.status == APPLICATION_INACTIVE) {
             jagg.message({
                 modalStatus: true,
                 type: 'warning',
                 timeout: 3000,
-                content: "<b>The application has been stopped due to inactivity. Start the application before launching it.</b>"
+                content: "<b>The " + cloudSpecificApplicationRepresentation.toLowerCase() + " has been stopped due to inactivity. Start the " + cloudSpecificApplicationRepresentation.toLowerCase() + " before launching it.</b>"
             });
         } else {
             jagg.message({
                 modalStatus: true,
                 type: 'error',
                 timeout: 3000,
-                content: "<b>Error has occurred while application creation. If the problem persists please contact system administrator.</b>"
+                content: "<b>Error has occurred while " + cloudSpecificApplicationRepresentation.toLowerCase() + " creation. If the problem persists please contact system administrator.</b>"
             });
         }
     }
@@ -272,12 +272,15 @@ function displayApplicationInactiveMessage() {
                      modalStatus: true,
                      type: 'warning',
                      timeout: 15000,
-                     content: "<b>The application is stopped because 12 hours have passed after it was last started.</b></br>" +
+                     content: "<b>The " + cloudSpecificApplicationRepresentation.toLowerCase() + " is stopped because 12 hours have passed after it was last started.</b></br>" +
                               "This is a limitation of free accounts in " + pageTitle + "</br> To restart, click the <b>Start</b>. button.</br>" +
-                              "Click the Support menu to contact us if you need any help."
+                              "<a href='"+requestNewAppTypeURL+"' target='_blank'>Contact us</a> if you need any help."
                  });
 }
 
+function requestToExtend() {
+    $("<a>").attr("href", requestNewAppTypeURL).attr("target", "_blank")[0].click();
+}
 function displayRestartCountMessage() {
     jagg.message({
         modalStatus: false,
@@ -422,7 +425,7 @@ function changeSelectedRevision(newRevision){
                                  '"><span class="view-log">View Logs</span></a></figure></div><div class="block-replicas">' +
                                  '<figure class="node-cicle"><figcaption><span class="fw-stack fw-lg ">' +
                                  '<i class="fw fw-ring fw-stack-2x"></i><i class="fw fw-add fw-stack-1x" ' +
-                                 'data-toggle="tooltip" title="Adding replicas to your application will not support in this release."></i>' +
+                                 'data-toggle="tooltip" title="Adding replicas to your ' + cloudSpecificApplicationRepresentation.toLowerCase() + ' will not support in this release."></i>' +
                                  '</span></figcaption></figure></div>');
 
     } else if(selectedApplicationRevision.status == APPLICATION_STOPPED || selectedApplicationRevision.status == APPLICATION_INACTIVE){
@@ -445,7 +448,7 @@ function changeSelectedRevision(newRevision){
                                  '</figure></div><div class="block-replicas"><figure class="node-cicle"><figcaption>' +
                                  '<span class="fw-stack fw-lg "><i class="fw fw-ring fw-stack-2x"></i>' +
                                  '<i class="fw fw-add fw-stack-1x" data-toggle="tooltip"' +
-                                 ' title="Adding replicas to your application will not support in this release.">' +
+                                 ' title="Adding replicas to your ' + cloudSpecificApplicationRepresentation.toLowerCase() + ' will not support in this release.">' +
                                  '</i></span></figcaption></figure></div>');
     } else {
 
@@ -484,7 +487,7 @@ function generateLunchUrl(appURL, status) {
         message += "</span>";
         message += "</a>";
     } else {
-        message += "<i class='fw fw-deploy fw-1x'></i><span>Application is still deploying</span>";
+        message += "<i class='fw fw-deploy fw-1x'></i><span>" + cloudSpecificApplicationRepresentation + " is still deploying</span>";
     }
     return message;
 }
@@ -511,7 +514,7 @@ function submitChangeAppIcon(newIconObj) {
     if(validated) {
         $('#changeAppIcon').submit();
     } else {
-        jagg.message({content: "Only jpg and png file types are allowed for the the application's icon.", type: 'error', id:'notification'});
+        jagg.message({content: "Only .jpg and .png file types are allowed for the the " + cloudSpecificApplicationRepresentation.toLowerCase() + "'s icon.", type: 'error', id:'notification'});
     }
 }
 
@@ -529,7 +532,7 @@ function validateIconImage(filename, fileSize) {
             extStatus = true;
             break;
         default:
-            jagg.message({content: "Only jpg and png file types are allowed for the the application's icon.", type: 'error', id:'notification'});
+            jagg.message({content: "Only jpg and png file types are allowed for the the " + cloudSpecificApplicationRepresentation.toLowerCase() + "'s icon.", type: 'error', id:'notification'});
             break;
     }
 
@@ -570,27 +573,27 @@ function deleteApplication(){
             setTimeout(redirectAppHome, 2000);
         }
     },function (jqXHR, textStatus, errorThrown) {
-        jagg.message({content: "Error occurred while deleting the selected application version", type: 'error', id:'view_log'});
+        jagg.message({content: "Error occurred while deleting the selected " + cloudSpecificApplicationRepresentation.toLowerCase() + " version", type: 'error', id:'view_log'});
     });
 }
 
 function deleteApplicationPopUp(){
     var versionCount = getVersionCount();
     if(versionCount == 1){
-        jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete Application Version',content:'You are about to delete the only available version of your application, are you sure you want to delete this "' + selectedRevision + '" version ?',
+        jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete ' + cloudSpecificApplicationRepresentation + ' Version',content:'You are about to delete the only available version of your ' + cloudSpecificApplicationRepresentation.toLowerCase() + ', are you sure you want to delete this "' + selectedRevision + '" version ?',
             okCallback:function(){
                 deleteApplication();
             }
         });
     } else if (versionCount > 1 && (selectedRevision == application.defaultVersion)) {
         jagg.message({
-            type:'warning', modalStatus: true, title:'Delete Application Version',
-            content:'This version:' + selectedRevision + ' is set as the default version of the application. If you '
+            type:'warning', modalStatus: true, title:'Delete ' + cloudSpecificApplicationRepresentation + ' Version',
+            content:'This version:' + selectedRevision + ' is set as the default version of the ' + cloudSpecificApplicationRepresentation.toLowerCase() + '. If you '
             + 'want to delete this particular version, please select some other version as the default version',
             timeout: 8000
         });
     } else {
-        jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete Application Version',content:'Are you sure you want to delete this version:' + selectedRevision + ' ?',
+        jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete ' + cloudSpecificApplicationRepresentation + ' Version',content:'Are you sure you want to delete this version:' + selectedRevision + ' ?',
             okCallback:function(){
                 deleteApplication();
             }, cancelCallback:function(){}
@@ -607,9 +610,5 @@ function redirectAppHome() {
 }
 
 function getVersionCount(){
-    var versionCount = 0;
-    for (var version in application.versions){
-        versionCount++;
-    }
-    return versionCount;
+    return Object.keys(application.versions).length;
 }

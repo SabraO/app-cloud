@@ -38,24 +38,6 @@ function validateDbName(databaseName) {
     return validator;
 }
 
-//Check if version of the application exists
-function validateApplicationVersionExistence(versions, defaultVersion) {
-    var validator = {
-        status: false,
-        msg: "Application version does not exist. Please select valid version."
-    };
-
-    for (var i = 0; i < versions.length; i++) {
-        if (versions[i] == defaultVersion) {
-            validator = {
-                status: true,
-                msg: "Default version is successfully updated."
-            }
-        }
-    }
-    return validator;
-}
-
 //Validated the application version provided by user
 function validateApplicationVersion(version){
     var versionRegex = new RegExp(VERSION_REGEX);

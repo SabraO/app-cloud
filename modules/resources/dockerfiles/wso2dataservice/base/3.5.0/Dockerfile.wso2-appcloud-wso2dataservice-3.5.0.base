@@ -23,16 +23,13 @@ FROM anapsix/alpine-java:8_server-jre_unlimited
 ENV WSO2CARBON_ZIP wso2dss-3.5.0.zip
 ENV INSTALL_PATH /home/wso2user/
 ENV CARBON_HOME_PATH $INSTALL_PATH/wso2dss-3.5.0
-ENV JAVA_OPTS="-Xms128m -Xmx256m -XX:MaxMetaspaceSize=128m"
 ENV ADMIN_PASS ""
 ENV WSO2_DSS_VERSION 3.5.0
 ENV AXIS2_SERVICE org.wso2.appcloud.dss.integration-3.0.0-SNAPSHOT.aar
 
 RUN apk update && \
-    apk add pwgen git wget openjdk8 && \
+    apk add pwgen git wget && \
     addgroup wso2 && adduser -g '' -s /bin/bash -D -G wso2 wso2user
-
-ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/jre/
 
 USER wso2user
 

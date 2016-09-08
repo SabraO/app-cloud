@@ -57,7 +57,10 @@ public class SQLQueryConstants {
     public static final String TAG_KEY = "tag_key";
     public static final String TAG_VALUE = "tag_value";
     public static final String CONTEXT = "context";
-
+    public static final String ACTIVE_CONTAINERS_COUNT = "ACTIVE_CONTAINERS_COUNT";
+    public static final String MATCHING_ENV_VARIABLE_COUNT = "matching_env_variable_count";
+    public static final String MATCHING_TAG_COUNT = "matching_tag_count";
+    public static final String MATCHING_VERSION_COUNT = "matching_version_count";
 
 
     /*==============================
@@ -212,6 +215,21 @@ public class SQLQueryConstants {
 
     public static final String GET_ALL_CLOUDS = "SELECT * FROM AC_CLOUD";
 
+    //"COLLATE utf8_bin" is added to perform a case sensitive search on the name
+    public static final String GET_MATCHING_ENV_VARIABLE_COUNT = "SELECT COUNT(id) as matching_env_variable_count " +
+            "FROM AC_RUNTIME_PROPERTY WHERE version_id= (SELECT id FROM AC_VERSION WHERE hash_id=? AND " +
+            "AC_VERSION.tenant_id=?) AND name COLLATE utf8_bin =? AND AC_RUNTIME_PROPERTY.tenant_id=?";
+
+    //"COLLATE utf8_bin" is added to perform a case sensitive search on the name
+    public static final String GET_MATCHING_TAG_COUNT = "SELECT COUNT(id) as matching_tag_count FROM AC_TAG WHERE " +
+            "version_id=(SELECT id FROM AC_VERSION WHERE hash_id=? AND AC_VERSION.tenant_id=?) AND name " +
+            "COLLATE utf8_bin =? AND AC_TAG.tenant_id=?";
+
+    //"COLLATE utf8_bin" is added to perform a case sensitive search on the name
+    public static final String GET_MATCHING_VERSION_COUNT = "SELECT COUNT(id) as matching_version_count FROM " +
+            "AC_VERSION WHERE AC_VERSION.tenant_id=? and name COLLATE utf8_bin =? and application_id=(SELECT id FROM " +
+            "AC_APPLICATION WHERE name=? AND AC_APPLICATION.tenant_id=?)";
+
     /* Update Queries */
     public static final String GET_ALL_APPLICATIONS_LIST_WITH_TAG =
             "SELECT app.name as application_name, app.hash_id as hash_id, type.name as app_type_name, " +
@@ -262,10 +280,12 @@ public class SQLQueryConstants {
     /*Delete Queries*/
 
     public static final String DELETE_RUNTIME_PROPERTY =
-            "DELETE FROM AC_RUNTIME_PROPERTY WHERE version_id=(SELECT id FROM AC_VERSION WHERE hash_id=?) AND name=? AND tenant_id=?";
+            "DELETE FROM AC_RUNTIME_PROPERTY WHERE version_id=(SELECT id FROM AC_VERSION WHERE hash_id=?) AND " +
+            "name COLLATE utf8_bin =? AND tenant_id=?";
 
     public static final String DELETE_TAG =
-            "DELETE FROM AC_TAG WHERE version_id=(SELECT id FROM AC_VERSION WHERE hash_id=?) AND name=? AND tenant_id=?";
+            "DELETE FROM AC_TAG WHERE version_id=(SELECT id FROM AC_VERSION WHERE hash_id=?) AND " +
+            "name COLLATE utf8_bin =? AND tenant_id=?";
 
     public static final String DELETE_APPLICATION = "DELETE FROM AC_APPLICATION WHERE hash_id=? AND tenant_id=?";
 
@@ -284,10 +304,7 @@ public class SQLQueryConstants {
     public static final String DELETE_ALL_APP_VERSION_EVENTS =
             "Delete from AC_EVENT where version_id = (SELECT id FROM AC_VERSION WHERE hash_id=? AND tenant_id=?)";
 
-	public static final String GET_TENANT_APPLICATION_COUNT = "SELECT COUNT(*) FROM AC_APPLICATION WHERE tenant_id = ? " +
-            "AND cloud_id=(select id from AC_CLOUD WHERE name=?)";
-
-    public static final String GET_TENANT_RUNNING_CONTAINER_COUNT = "SELECT COUNT(id) AS ACTIVE_CONTAINERS_COUNT FROM " +
+    public static final String RUNNING_APPLICATION_VERSION_COUNT = "SELECT COUNT(id) AS ACTIVE_CONTAINERS_COUNT FROM " +
             "AC_VERSION WHERE application_id IN (SELECT id FROM AC_APPLICATION WHERE tenant_id = ? AND " +
             "cloud_id = (select id from AC_CLOUD WHERE name=?)) AND status='running'";
 }

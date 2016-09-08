@@ -76,12 +76,13 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var maxApplications = <%=maxApplications%>;
     var cloudSpecificApplicationRepresentation = "<%=cloudSpecificApplicationRepresentation%>";
     var versionArray = jQuery.parseJSON('<%=versionArray%>');
+    var requestNewAppTypeURL = "<%=outputs.requestNewAppTypeURL%>";
 </script>
 
-    <div class="right-pane">
+    <div class="right-pane visible">
     <!-- BOF App factory menu actionbar -->
     <div class="action-bar">
-        <a href="<%=jagg.getAbsoluteUrl("/site/pages/index.jag")%>" class="btn-action"  title="Back to Application listing">
+        <a href="<%=jagg.getAbsoluteUrl("/site/pages/index.jag")%>" class="btn-action"  title="Back to <%=cloudSpecificApplicationRepresentation%> listing">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
                     <i class="fw fw-left-arrow fw-stack-1x"></i>
@@ -126,7 +127,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
         <div class="row padding-bottom-xlg">
           <div class="col-xs-12 col-md-9 col-lg-9">
               <div class="block-general" style="background-color: #303030;">
-                      <div class="col-xs-12 col-md-12 col-lg-9">
+                      <div class="col-xs-12 col-md-12 col-lg-8">
                           <div class="btn-group pull-left version-number">
                               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <span id="selected-version"><%=selectedRevision%> </span><span class="caret"></span>
@@ -167,10 +168,19 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                       </a>
                                     </div>
                                 <%
-                                } else if(selectedApplicationRevision.status==APPLICATION_STOPPED || selectedApplicationRevision.status==APPLICATION_INACTIVE){
+                                } else if(selectedApplicationRevision.status==APPLICATION_STOPPED){
                                 %>
                                     <div class="btn-group ctrl-edit-button btn-edit-code">
                                       <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue" onclick="startApplication();">Start</a>
+                                    </div>
+                                <%
+                                } else if(selectedApplicationRevision.status==APPLICATION_INACTIVE){
+                                %>
+                                    <div class="btn-group ctrl-edit-button btn-edit-code">
+                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue" onclick="startApplication();">Start</a>
+                                    </div>
+                                    <div class="btn-group ctrl-edit-button btn-edit-code">
+                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-gray" onclick="requestToExtend();">Request to keep <%=cloudSpecificApplicationRepresentation.toLowerCase()%> running continuously</a>
                                     </div>
                                 <%
                                 } else {
@@ -183,7 +193,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                %>
                           </div>
                       </div>
-                      <div class="col-xs-12 col-md-12 col-lg-3">
+                      <div class="col-xs-12 col-md-12 col-lg-4">
                           <a id="delete-version" onclick="deleteApplicationPopUp();">
                               <div class="btn-create-version">
                                   <span class="fw-stack fw-lg btn-action-ico">
@@ -234,7 +244,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                         <figcaption>
                                           <span class="fw-stack fw-lg ">
                                               <i class="fw fw-circle-outline fw-stack-2x"></i>
-                                              <i class="fw fw-add fw-stack-1x" data-toggle="tooltip" title="Adding replicas to your application will not support in this release."></i>
+                                              <i class="fw fw-add fw-stack-1x" data-toggle="tooltip" title="Adding replicas to your <%=cloudSpecificApplicationRepresentation.toLowerCase()%> will not support in this release."></i>
                                           </span>
                                         </figcaption>
                                     </figure>
@@ -335,11 +345,6 @@ jagg.template("home", function(inputs, outputs, jagg) {
             applicationRevision: selectedRevision,
             versionKey: selectedApplicationRevision.hashId
         }, function(result) {
-            jagg.message({
-                content: "Application was successfully redeployed.",
-                type: 'info',
-                timeout: '5000'
-            });
         }, function(jqXHR, textStatus, errorThrown) {
             setTimeout(reloadAppHome, 5000);
             jagg.message({
@@ -376,7 +381,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
         }, function(result) {
             setTimeout(reloadAppHome, 2000);
             jagg.message({
-                content: "Application was successfully stopped.",
+                content: cloudSpecificApplicationRepresentation + " was successfully stopped.",
                 type: 'info',
                 timeout: '5000'
             });
@@ -414,12 +419,6 @@ jagg.template("home", function(inputs, outputs, jagg) {
                 conSpecMemory: conSpecMemory
 
             }, function(result) {
-                //check if application has more than one version
-                jagg.message({
-                    content: "New version started successfully",
-                    type: 'info',
-                    timeout: 3500
-                });
             });
         }
     }
@@ -511,7 +510,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                     //application deletion is involved with the "Stopping Containers" event if the event name is
                     //"Stopping Containers" the following message is not displayed
                     if (event.name !== "Stopping Containers") {
-                        jagg.message({content: "Error occurred while creating application.", type: 'error'});
+                        jagg.message({content: "Error occurred while creating " + cloudSpecificApplicationRepresentation.toLowerCase() + ".", type: 'error'});
                     }
                     setTimeout(redirectAppListing, 5000);
                     function redirectAppListing(){
@@ -520,7 +519,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                 }
             }
         },function (jqXHR, textStatus, errorThrown) {
-             jagg.message({content: "Error occurred while restarting application.", type: 'error'});
+             jagg.message({content: "Error occurred while restarting " + cloudSpecificApplicationRepresentation.toLowerCase() + ".", type: 'error'});
         });
     }
 

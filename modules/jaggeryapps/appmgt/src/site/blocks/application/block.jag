@@ -38,7 +38,7 @@ jagg.block("application", {
         var appTypesProperties = require(parsedObject);
         var appType = appTypesProperties[inputs.appTypeName];
         var applicationName = inputs.applicationName;
-        var applicationCount = applicationModule.getRunningApplicationVersionCount();
+        var runninngApplicationCount = applicationModule.getRunningApplicationVersionCount();
         var subscriptionPlanBaseURL = modManager.getPropertyValue("SubscriptionPlanBaseURL");
         var notAllowedEnvVariables = applicationModule.getNotAllowedEnvVariables();
         var maxAppCount = applicationModule.getMaxInstanceCount();
@@ -46,15 +46,23 @@ jagg.block("application", {
             getAllowedContainerSpecificationsForRuntime(runtimes[0].id);
         var defaultVersion = applicationModule.getDefaultVersion(inputs.applicationName);
         var appTypeCount = applicationModule.getAllAppTypes().length;
-        var cloudSpecificApplicationRepresentation = jagg.module("manager").getCloudTypeProperties().cloudSpecificApplicationRepresentation;
+        var cloudSpecificApplicationRepresentation = modManager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
         var applications = applicationModule.getAllApplications();
+
+        var requestNewAppTypeSubjectMessage = 'Requesting a new runtime for application type: '+inputs.appTypeName+' by tenant: ' + modManager.getTenantDomain();
+        var requestNewAppTypeURL = modManager.getPropertyValue(modManager.getCloudTypeProperties().properties.supportUrl) +
+                '&subject=' + requestNewAppTypeSubjectMessage;
+
+        var requestMoreAppsSubjectMessage = 'Requesting to run more than '+maxAppCount+' applications for tenant: ' + modManager.getTenantDomain();
+        var requestMoreAppseURL = modManager.getPropertyValue(modManager.getCloudTypeProperties().properties.supportUrl) +
+                '&subject=' + requestMoreAppsSubjectMessage;
 
 
         return {
             "runtimes" : runtimes,
             "appType" : appType,
             "applicationName" : applicationName,
-            "applicationCount" : applicationCount,
+            "runninngApplicationCount" : runninngApplicationCount,
             "subscriptionPlanBaseURL" : subscriptionPlanBaseURL,
             "notAllowedEnvVariables" : notAllowedEnvVariables,
             "maxAppCount" : maxAppCount,
@@ -62,7 +70,9 @@ jagg.block("application", {
             "defaultVersion" : defaultVersion,
             "appTypeCount" : appTypeCount,
             "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation,
-            "applications" : applications
+            "applications" : applications,
+            "requestNewAppTypeURL" : requestNewAppTypeURL,
+            "requestMoreAppseURL" : requestMoreAppseURL
         };
     }
 });

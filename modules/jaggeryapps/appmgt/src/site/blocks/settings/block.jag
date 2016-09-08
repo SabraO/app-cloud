@@ -31,8 +31,11 @@ jagg.block("settings", {
         var applicationModule = jagg.module("application");
         var application = applicationModule.getApplication(inputs.applicationKey);
 
+        var modManager = jagg.module("manager");
+        var cloudSpecificApplicationRepresentation = modManager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
         return {
-            "application": application
+            "application": application,
+            "cloudSpecificApplicationRepresentation":cloudSpecificApplicationRepresentation
         };
     }
 

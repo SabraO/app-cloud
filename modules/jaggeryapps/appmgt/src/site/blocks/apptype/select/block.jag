@@ -35,9 +35,15 @@ jagg.block("apptype/select", {
                 appTypes[index].docUrl = manager.getPropertyValue(appTypes[index].name + DOC_URL);
             }
         }
+        var cloudSpecificApplicationRepresentation = manager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
+        var requestNewAppTypeSubjectMessage = 'Requesting a new application type by tenant: ' + manager.getTenantDomain();
+        var requestNewAppTypeURL = manager.getPropertyValue(manager.getCloudTypeProperties().properties.supportUrl) +
+                '&subject=' + requestNewAppTypeSubjectMessage;
 
         return {
-            "appTypes": appTypes
+            "appTypes": appTypes,
+            "requestNewAppTypeURL": requestNewAppTypeURL,
+            "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation
         };
     }
 });

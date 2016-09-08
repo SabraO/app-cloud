@@ -25,6 +25,7 @@ jagg.template("urlmapper", function (inputs, outputs, jagg) { %>
     var applicationKey = application.hashId;
     var customURL = application.customURL;
     var defaultHostName = outputs.defaultHostName;
+    var cloudSpecificApplicationRepresentation = outputs.cloudSpecificApplicationRepresentation;
 %>
 
 <!-- start of setting global javascript variable values from jaggery side -->
@@ -33,24 +34,25 @@ jagg.template("urlmapper", function (inputs, outputs, jagg) { %>
     var defaultVersionName = "<%=defaultVersionName%>";
     var customURL = "<%=customURL%>";
     var defaultHostName = "<%=defaultHostName%>";
+    var cloudSpecificApplicationRepresentation = "<%=cloudSpecificApplicationRepresentation%>";
 </script><!-- end of setting global javascript variable -->
 
-<div class="right-pane">
+<div class="right-pane visible">
 <!-- BOF App factory menu actionbar -->
 <input type="hidden" maxlength="19" id="defaultDomain" name="defaultDomain" value=""/>
 <div class="action-bar">
-	<a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to Application">
+	<a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to <%=cloudSpecificApplicationRepresentation%>">
          <span class="fw-stack fw-lg btn-action-ico">
              <i class="fw fw-circle-outline fw-stack-2x"></i>
              <i class="fw fw-left-arrow fw-stack-1x"></i>
-         </span> <span class="hidden-xs">Back to Application</span>
+         </span> <span class="hidden-xs">Back to <%=cloudSpecificApplicationRepresentation%></span>
     </a>
 </div><!-- EOF App factory menu actionbar-->
 
 <div class="container-fluid app-content-section">
     <div class="row">
          <div class="col-md-12 msg-issues">
-             Create a customized URL for the default version of the application.
+             Create a customized URL for the default version of the <%=cloudSpecificApplicationRepresentation%>.
          </div>
     </div>
  <div class="clearfix"></div>

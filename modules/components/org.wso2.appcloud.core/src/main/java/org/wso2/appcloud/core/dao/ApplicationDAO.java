@@ -17,8 +17,6 @@
 package org.wso2.appcloud.core.dao;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.wso2.appcloud.common.AppCloudException;
 import org.wso2.appcloud.core.DBUtil;
 import org.wso2.appcloud.core.SQLQueryConstants;
@@ -1635,13 +1633,13 @@ public class ApplicationDAO {
         ResultSet resultSet = null;
         int appCount = 0;
         try {
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_TENANT_RUNNING_CONTAINER_COUNT);
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.RUNNING_APPLICATION_VERSION_COUNT);
             preparedStatement.setInt(1, tenantId);
             preparedStatement.setString(2, cloudType);
             resultSet = preparedStatement.executeQuery();
             dbConnection.commit();
             if (resultSet.next()) {
-                appCount = resultSet.getInt("ACTIVE_CONTAINERS_COUNT");
+                appCount = resultSet.getInt(SQLQueryConstants.ACTIVE_CONTAINERS_COUNT);
             }
         } catch (SQLException e) {
             String msg =
@@ -2215,4 +2213,114 @@ public class ApplicationDAO {
         return cloudTypes;
     }
 
+    /**
+     * Method to check if given environment variable exists
+     *
+     * @param dbConnection   database connection
+     * @param versionKey     version hash id
+     * @param envVariableKey key of environment variable
+     * @param tenantId       tenant Id
+     * @return if environment variable exists or not
+     * @throws AppCloudException
+     */
+    public boolean isEnvironmentVariableExist(Connection dbConnection, String versionKey, String envVariableKey,
+                                              int tenantId) throws AppCloudException {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_MATCHING_ENV_VARIABLE_COUNT);
+            preparedStatement.setString(1, versionKey);
+            preparedStatement.setInt(2, tenantId);
+            preparedStatement.setString(3, envVariableKey);
+            preparedStatement.setInt(4, tenantId);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return (resultSet.getInt(SQLQueryConstants.MATCHING_ENV_VARIABLE_COUNT) > 0);
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            String msg = "Error while checking if environment variable exists for version hash id: " + versionKey +
+                    " and tenant id: " + tenantId + ".";
+            throw new AppCloudException(msg, e);
+        } finally {
+            DBUtil.closeResultSet(resultSet);
+            DBUtil.closePreparedStatement(preparedStatement);
+        }
+    }
+
+    /**
+     * Method to check if given tag exists
+     *
+     * @param dbConnection database connection
+     * @param versionKey   version hash id
+     * @param tagKey       key of tag
+     * @param tenantId     tenant id
+     * @return if tag exists or not
+     * @throws AppCloudException
+     */
+    public boolean isTagExist(Connection dbConnection, String versionKey, String tagKey,
+                              int tenantId) throws AppCloudException {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_MATCHING_TAG_COUNT);
+            preparedStatement.setString(1, versionKey);
+            preparedStatement.setInt(2, tenantId);
+            preparedStatement.setString(3, tagKey);
+            preparedStatement.setInt(4, tenantId);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return (resultSet.getInt(SQLQueryConstants.MATCHING_TAG_COUNT) > 0);
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            String msg = "Error while checking if tag exists for version hash id: " + versionKey + " and tenant id: "
+                    + tenantId + ".";
+            throw new AppCloudException(msg, e);
+        } finally {
+            DBUtil.closeResultSet(resultSet);
+            DBUtil.closePreparedStatement(preparedStatement);
+        }
+    }
+
+    /**
+     * Method to check if the given version exists in the applications version list
+     *
+     * @param dbConnection    database connection
+     * @param applicationName application name
+     * @param versionName     version name
+     * @param tenantId        tenant id
+     * @return if the version exists or not
+     * @throws AppCloudException
+     */
+    public boolean isVersionExist(Connection dbConnection, String applicationName, String versionName, int tenantId)
+            throws AppCloudException {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_MATCHING_VERSION_COUNT);
+            preparedStatement.setInt(1, tenantId);
+            preparedStatement.setString(2, versionName);
+            preparedStatement.setString(3, applicationName);
+            preparedStatement.setInt(4, tenantId);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return (resultSet.getInt(SQLQueryConstants.MATCHING_VERSION_COUNT) > 0);
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            String msg = "Error while checking if version exists for application name: " + applicationName +
+                    ", version: " + versionName + " and tenant id: " + tenantId + ".";
+            throw new AppCloudException(msg, e);
+        } finally {
+            DBUtil.closeResultSet(resultSet);
+            DBUtil.closePreparedStatement(preparedStatement);
+        }
+    }
 }

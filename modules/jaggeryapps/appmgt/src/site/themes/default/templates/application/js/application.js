@@ -57,6 +57,9 @@ $(document).on('change focusout keyup', '.element-add-value', function () {
     var propHolder = $(this).parent('div').parent('div');
     var key = propHolder.find('.element-add-key').val();
     var addBtn = propHolder.find('.btn-primary-add-val');
+    if(propHolder.parent('div').attr("id") == "env-pane") {
+        var addBtn = propHolder.find('.btn-primary-add-val-env');
+    }
     if(!value || !key){
         addBtn.prop("disabled" , true);
     } else {
@@ -71,10 +74,10 @@ $(document).on('change focusout keyup', '.element-add-key', function () {
     var addBtn = propHolder.find('.btn-primary-add-val');
 
     if(propHolder.parent('div').attr("id") == "env-pane"){
+        var addBtn = propHolder.find('.btn-primary-add-val-env');
         $(this).rules("add", {
             validateEnvironmentVariable: true
         });
-
         if(validateEnvironmentVariable(key)){
             addBtn.prop("disabled" , false);
             propHolder.find('.element-add-value').prop("disabled" , false);
@@ -91,19 +94,32 @@ $(document).on('change focusout keyup', '.element-add-key', function () {
     }
 });
 
-$(document).on('click', '.btn-primary-add-val', function () {
+$(document).on('click', '.btn-primary-add-val, .btn-primary-add-val-env', function() {
     activateCreateApplication();
     var addBlock = $(this).parent().parent();
     var key = addBlock.find('.element-add-key')[0].value;
     var value = addBlock.find('.element-add-value')[0].value;
     var paneId = addBlock.parent().attr('id');
     var initialValueElement = '<input type="text" class="form-control element-add-value" placeholder="Value">\n';
+    var initialAddElement = '<button class="btn btn-primary btn-primary-add btn-primary-add-val" disabled>Add</button>\n';
     if (paneId === "env-pane") {
         initialValueElement = '<select id="value" name="value" class="form-control select2 element-add-value"></select>\n';
+        initialAddElement = '<button class="btn btn-primary btn-primary-add btn-primary-add-val-env" disabled>Add</button>\n';
     }
-    drawInitialEnvTagPane(addBlock, key, value, initialValueElement);
+    drawInitialEnvTagPane(addBlock, key, value, initialValueElement, initialAddElement);
 });
-function drawInitialEnvTagPane(addBlock, key, value, initialValueElement){
+
+function addEnvFromFile(key, val) {
+    activateCreateApplication();
+    var addBlock = $('.btn-primary-add-val-env').parent().parent();
+    var key = key;
+    var value = val;
+    var initialValueElement = '<select id="value" name="value" class="form-control select2 element-add-value"></select>\n';
+    var initialAddElement = '<button class="btn btn-primary btn-primary-add btn-primary-add-val-env" disabled>Add</button>\n';
+    drawInitialEnvTagPane(addBlock, key, value, initialValueElement, initialAddElement);
+}
+
+function drawInitialEnvTagPane(addBlock, key, value, initialValueElement, initialAddElement){
     var panelBody = addBlock.parent();
     panelBody.append(
         '<div class="form-inline  property-seperator prop-key-vals-holder">\n'+
@@ -135,7 +151,7 @@ function drawInitialEnvTagPane(addBlock, key, value, initialValueElement){
         initialValueElement +
         '</div>\n'+
         '<div class="form-group">\n'+
-        '<button class="btn btn-primary btn-primary-add btn-primary-add-val" disabled>Add</button>\n'+
+        initialAddElement +
         '</div>\n'+
         '</div>\n'
     );

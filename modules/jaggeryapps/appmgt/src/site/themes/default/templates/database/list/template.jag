@@ -21,6 +21,7 @@ jagg.template("database/list", function (inputs, outputs, jagg) { %>
 <%
 var hasDBs = outputs.hasDBs;
 var isSSRunning = outputs.isSSRunning;
+var cloudSpecificApplicationRepresentation = outputs.cloudSpecificApplicationRepresentation;
 %>
 
 <link rel="stylesheet" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('css/datatables-1.10.7/jquery.dataTables.min.css'))%>">
@@ -46,7 +47,7 @@ var isSSRunning = outputs.isSSRunning;
 <div class="container-fluid app-content-section">
         <div class="row">
             <div class="col-md-12 msg-issues">
-            Create new MySQL databases to store your application data. The default user of the new database has all permissions granted.
+            Create new MySQL databases to store your <%=cloudSpecificApplicationRepresentation%> data. The default user of the new database has all permissions granted.
             </div>
         </div>
     <%if(!isSSRunning) {%>
