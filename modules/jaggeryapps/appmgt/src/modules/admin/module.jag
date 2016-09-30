@@ -18,6 +18,12 @@
  */
 
 jagg.module("admin", {
+    redeployApplicationVersion:function () {
+        return jagg.require(jagg.getModulesDir() + "admin/admin.jag").redeployApplicationVersion.apply(this, arguments);
+    },
+    getApplicationVersionsOfTenants:function () {
+        return jagg.require(jagg.getModulesDir() + "admin/admin.jag").getApplicationVersionsOfTenants.apply(this, arguments);
+    },
     deleteTenant:function () {
         return jagg.require(jagg.getModulesDir() + "admin/admin.jag").deleteTenant.apply(this, arguments);
     },

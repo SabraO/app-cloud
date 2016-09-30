@@ -96,9 +96,11 @@ var addApplication = function (applicationName, versionName, applicationDescript
             versionHashId, dockerClient, artifactUrl, hostName, appCreationMethod, runtimeProperties, conSpecMemory);
     var buildDockerImageStatus = buildDockerImage(applicationName, versionName, runtimeId, absFileUploadedPath, applicationRuntime, tagName, versionHashId, dockerClient);
     if (buildDockerImageStatus) {
-        pushDockerImage(applicationName, versionName, applicationRuntime, tagName, versionHashId, dockerClient);
-        triggerKubernetesDeployment(runtimeProperties, applicationRuntime, tagName, applicationName, versionName, appTypeName, runtimeId, replicas, versionHashId, conSpecMemory, conSpecCpu);
-        putSelectedRevisionToSession(applicationHashId, versionName);
+        var pushDockerImageStatus = pushDockerImage(applicationName, versionName, applicationRuntime, tagName, versionHashId, dockerClient);
+        if (pushDockerImageStatus) {
+            triggerKubernetesDeployment(runtimeProperties, applicationRuntime, tagName, applicationName, versionName, appTypeName, runtimeId, replicas, versionHashId, conSpecMemory, conSpecCpu);
+            putSelectedRevisionToSession(applicationHashId, versionName);
+        }
     }
 
     if (isNewVersion == 'true') {
@@ -127,14 +129,28 @@ var pushDockerImage = function (applicationName, versionName, applicationRuntime
     //Adding docker image push pending event
     var msg = "Docker image push successfully triggered";
     addEvent(DOCKER_REGISTRY_PUSH, EVENT_PENDING, msg, versionHashId);
+    if (log.isDebugEnabled()) {
+        log.debug("Start pushing docker image for version:" + versionHashId);
+    }
     try {
         dockerClient.pushDockerImage(modManager.getPropertyValue(PROPERTY_DOCKER_REGISTRY_URL),applicationRuntime.getImageName(), tagName);
     } catch (e) {
-        var msg = "Error uploading docker image to remote registry";
-        addEvent(DOCKER_REGISTRY_PUSH, EVENT_FAILED, msg, versionHashId);
-        if (log.isDebugEnabled()) {
-            log.debug("Start pushing docker image for version:" + versionHashId);
+        for (var i = 0 ; i < 3 ; i++){
+            try{
+                log.info("Retrying docker push retry counter value : " + i);
+                dockerClient.pushDockerImage(modManager.getPropertyValue(PROPERTY_DOCKER_REGISTRY_URL),applicationRuntime.getImageName(), tagName);
+                //Adding docker push success event
+                var msg = "Docker image push successfully completed";
+                addEvent(DOCKER_REGISTRY_PUSH, EVENT_SUCCEEDED, msg, versionHashId);
+                return true;
+            } catch (e){
+                log.error("Error occurred while pushing image, Hence retrying...");
+            }
         }
+
+        var msg = "Error pushing docker image to remote registry";
+        addEvent(DOCKER_REGISTRY_PUSH, EVENT_FAILED, msg, versionHashId);
+
         try {
             ApplicationManager.updateVersionStatus(versionHashId, APPLICATION_ERROR);
         } catch(e1){
@@ -154,7 +170,8 @@ var pushDockerImage = function (applicationName, versionName, applicationRuntime
     //Adding docker push success event
     var msg = "Docker image push successfully completed";
     addEvent(DOCKER_REGISTRY_PUSH, EVENT_SUCCEEDED, msg, versionHashId);
-}
+    return true;
+};
 
 var buildDockerImage = function (applicationName, versionName, runtimeId, absFileUploadedPath, applicationRuntime, tagName, versionHashId, dockerClient){
 
@@ -373,7 +390,7 @@ var deployApplication = function(applicationName, versionName, appTypeName, depl
     var conSpecCpu;
     //If create application call then pass spec values or else (redeploy) query the database
     if (!(conSpecMemoryLimit && conSpecCpuLimit)) {
-       var applicationHashId = Util.getApplicationHashId(applicationName, modManager.getTenantId());
+       var applicationHashId = Util.getApplicationHashId(applicationName, modManager.getTenantId(true));
        var application = getApplication(applicationHashId);
        if (application.versions) {
             if (application.versions[versionName]) {
@@ -401,7 +418,7 @@ var deployApplication = function(applicationName, versionName, appTypeName, depl
     addEvent(KUBE_DEPLOY, EVENT_PENDING, msg, versionHashId);
     //Creating basic deployment
     var applicationCtx = KubernetesProvisioningUtils.getApplicationContext(
-            applicationName, versionName, appTypeName , modManager.getTenantId(), modManager.getTenantDomain(), versionHashId);
+            applicationName, versionName, appTypeName , modManager.getTenantId(true), modManager.getTenantDomain(true), versionHashId);
     var kubService = new KubernetesRuntime(applicationCtx, resourceQuotaLimit);
     if (log.isDebugEnabled()) {
         log.debug("Deploying application: " + applicationName);
@@ -468,7 +485,7 @@ var deployApplication = function(applicationName, versionName, appTypeName, depl
 var getRestartCounts = function (applicationName, versionName, applicationType){
     var versionHashId = getVersionHashId(applicationName, versionName);
     var applicationCtx = KubernetesProvisioningUtils.getApplicationContext(
-            applicationName, versionName, applicationType , modManager.getTenantId(), modManager.getTenantDomain(), versionHashId);
+            applicationName, versionName, applicationType , modManager.getTenantId(true), modManager.getTenantDomain(true), versionHashId);
     var kubService = new KubernetesRuntime(applicationCtx);
     var restartCounts = kubService.getPodRestartCounts();
     return restartCounts;
@@ -478,7 +495,7 @@ var getRestartCounts = function (applicationName, versionName, applicationType){
 var constructAppLaunchURL = function(applicationName, versionName){
     applicationName = KubernetesProvisioningUtils.getKubernetesValidAppName(applicationName);
     applicationName = applicationName.toLowerCase();
-    var urlPrefix = modManager.getTenantDomain()
+    var urlPrefix = modManager.getTenantDomain(true)
                             + "-" + applicationName + "-" + versionName;
     var appLaunchURL = urlPrefix.replace(/\./g, '-')
                                +  "." + modManager.getPropertyValue("ApplicationLaunchBaseURL");
@@ -723,7 +740,6 @@ var getAllRuntimes = function(appType){
             runtimeObject.id = runtime.id;
             runtimeObject.runtimeName = runtime.runtimeName;
             runtimeObject.imageName = runtime.imageName;
-            runtimeObject.repoURL = runtime.repoURL;
             runtimeObject.tag = runtime.tag;
             runtimeObject.description = runtime.description;
 
@@ -770,7 +786,7 @@ var getAllApplications = function(){
 }
 
 var generateApplicationHashId = function(applicationName){
-    var tenantId = modManager.getTenantId();
+    var tenantId = modManager.getTenantId(true);
     try {
         return Util.getApplicationHashId(applicationName, tenantId);
     } catch (e){
@@ -784,7 +800,7 @@ var generateApplicationHashId = function(applicationName){
 
 var getApplicationHashIdByName = function(applicationName){
     try {
-        var tenantId = modManager.getTenantId();
+        var tenantId = modManager.getTenantId(true);
         var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
         return applicationHashId;
     } catch (e){
@@ -805,6 +821,17 @@ var getApplicationNameByHashId = function(applicationHashId){
         throw e;
     }
 }
+
+var getApplicationHashIdOfMatchingAppName = function(applicationName) {
+    try {
+        return ApplicationManager.getApplicationHashIdOfMatchingAppName(applicationName);
+    } catch(e){
+        var msg = "Error while getting application hash id of matching app name: " + applicationName;
+        log.error(msg);
+        log.error(e);
+        throw e;
+    }
+};
 
 /**
  * Method for getting the application e.g. :- Application {
@@ -1129,19 +1156,19 @@ var getSelectedRevisionFromSession = function(applicationKey) {
 
 var deleteSelectedVersionFromSession = function(applicationKey){
     var selectedVersions = session.get("SELECTED_REVISIONS");
-    if(selectedVersions && selectedVersions[applicationKey]){
+    if (selectedVersions && selectedVersions[applicationKey]) {
         delete selectedVersions[applicationKey];
     }
 };
 
 var getVersionHashId = function(applicationName, versionName){
-    var tenantId = modManager.getTenantId();
+    var tenantId = modManager.getTenantId(true);
     var versionHashId = Util.getVersionHashId(applicationName, versionName, tenantId)
     return versionHashId;
 }
 
 var getApplicationCreationEvents = function(applicationName, versionName) {
-    var tenantId = modManager.getTenantId();
+    var tenantId = modManager.getTenantId(true);
     var versionHashId = Util.getVersionHashId(applicationName, versionName, tenantId);
     var eventsManager = new EventsManager();
     var eventsArray = [];
@@ -1336,7 +1363,7 @@ var deleteApplicationUploadedPath = function(versionHashId) {
 var deleteApplicationFromKubernetes = function(versionHashId) {
 
     try{
-        var applicationCtx = KubernetesProvisioningUtils.getApplicationContext(null, null, null, modManager.getTenantId(),
+        var applicationCtx = KubernetesProvisioningUtils.getApplicationContext(null, null, null, modManager.getTenantId(true),
                                                                                modManager.getTenantDomain(true), versionHashId);
         var kubernetesRuntimeProvisioningService = new KubernetesRuntime(applicationCtx);
         return kubernetesRuntimeProvisioningService.deleteDeployment();
@@ -1454,7 +1481,7 @@ var getDefaultVersion = function (applicationName) {
 };
 
 var redeployMappedDomain = function (applicationName, versionName) {
-    var tenantId = modManager.getTenantId();
+    var tenantId = modManager.getTenantId(true);
     var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
     setDefaultDomain(applicationName, versionName, applicationHashId);
 

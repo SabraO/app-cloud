@@ -44,6 +44,7 @@ var MAX_CONTAINER_SPEC_MEMORY = "Max.ContainerSpec.Memory";
 var MAX_CONTAINER_SPEC_CPU = "Max.ContainerSpec.CPU";
 var GOOGLE_ANALYTICS_ENABLED = "Google.Analytics.Enabled";
 var GOOGLE_TRACKING_ID = "Google.Tracking.Id";
+var ZOPIM_CHAT_ID = "Zopim.Chat.Id";
 var FILE_UPLOAD_TIMEOUT = "File.Upload.Timeout";
 
 //events related constants

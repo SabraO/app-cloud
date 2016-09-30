@@ -95,7 +95,7 @@ function populateDatatable() {
                 var currentId = $(this).attr("id");
                 //getting the user name from  id, removing 'delete_'
                 var userName = currentId.substr(7);
-                jagg.popMessage({type:'confirm',title:'Delete User',content:'Are you sure you want to delete the user ' + userName + ' ?', okCallback:function(){deleteUser(userName);}, cancelCallback:function(){}});
+                jagg.popMessage({type:'confirm',title:'Delete User',content:'Are you sure you want to delete the user: ' + userName + ' ?', yesCallback:function(){deleteUser(userName);}, noCallback:function(){}});
             });
         } // end of call back function
     }); // end of datatable

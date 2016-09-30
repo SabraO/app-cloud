@@ -31,6 +31,66 @@ var databaseModule = jagg.module("databases");
 var realmService = carbon.server.osgiService('org.wso2.carbon.user.core.service.RealmService');
 var tenantManager = realmService.getTenantManager();
 
+var getApplicationVersionsOfTenants = function (state, fromTenantId, toTenantId) {
+    var tenantApps = {};
+    var allTenantRunningApplicationMap = ApplicationManager.getRunningApplicationsOfAllTenants();
+    log.info('Number of tenants having running applications in cloud:' + allTenantRunningApplicationMap.size());
+    if (allTenantRunningApplicationMap && allTenantRunningApplicationMap.entrySet()) {
+        var iterator = allTenantRunningApplicationMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            var entry = iterator.next();
+            var tenantId = entry.getKey();
+            var tenantDomain = managerModule.getTenantDomainById(tenantId);
+            if (tenantDomain != null) {
+                var appList = [];
+                var applicationList = entry.getValue();
+                for (var i = 0; i < applicationList.size(); i++) {
+                    if (applicationList != null) {
+                        var app = applicationList.get(i);
+                        if (app != null) {
+                            var obj = {};
+                            obj.appName = app.getApplicationName();
+                            obj.versionHashId = app.getHashId();
+                            obj.appType = app.getApplicationType();
+                            obj.version = app.getDefaultVersion();
+                            obj.tenantDomain = tenantDomain;
+                            appList.push(obj);
+                        } else {
+                            log.warn("One of the applications of tenant:" + tenantId + " has a null app.");
+                        }
+                    } else {
+                        log.warn("Application list of tenant:" + tenantId + " is null.");
+                    }
+                }
+                tenantApps[tenantDomain] = appList;
+            }
+        }
+        return tenantApps;
+    }
+} ;
+
+var redeployApplicationVersion = function (tenantDomain, name, hashId, version, type) {
+    try {
+        context.startTenantFlow();
+        context.getThreadLocalCarbonContext().setTenantDomain(tenantDomain, true);
+        var tenantAdminUser = tenantManager.getTenant(context.getThreadLocalCarbonContext().getTenantId()).getAdminName() + '@' + tenantDomain;
+        jagg.setUser(tenantAdminUser);
+
+        log.info('Start deploying application on tenant:' + tenantDomain + ' with name:' + name + ', version:' +
+                version + ', hashId:' + hashId + ', apptype:' + type);
+        var redeployed = applicationModule.redeployVersion(name, version, hashId, type);
+        log.info('Deployment successfully completed for application on tenant:' + tenantDomain + ' with name:' +
+                name + ', version:' + version + ', hashId:' + hashId + ', apptype:' + type);
+        return redeployed;
+    } catch (e) {
+        log.error('error occurred when redeploying application on tenant:' + tenantDomain + ' with name:' + name +
+                ', version:' + version + ', hashId:' + hashId + ', apptype:' + type);
+        log.error(e);
+    } finally {
+        context.endTenantFlow();
+    }
+};
+
 var deleteTenant = function (tenantDomain) {
     deleteAllApplicationsOfTenant(tenantDomain);
     deleteAllDatabasesOfTenant(tenantDomain);

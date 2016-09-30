@@ -77,29 +77,34 @@ $(document).ready(function () {
 
     }, function (result) {
         var parsedResult = JSON.parse(result);
-        for (var i = 0; i < parsedResult.length; i++) {
+        if(parsedResult.length == 0){
             $(".tag-list").prepend(
-                '<div class="form-inline  property-seperator custom-env-class-for-demo">' +
-                '<div class="form-group">' +
-                '<label class="sr-only" for="key">Key</label>' +
-                '<input type="text" class="form-control tag-key" id="key" placeholder="Key" readonly value="' + parsedResult[i].key + '">' +
-                '</div>' +
-                '<div class="form-group">' +
-                '<label class="sr-only" for="value">Value</label>' +
-                '<input type="text" class="form-control tag-value" id="value" placeholder="Value" readonly value="' + parsedResult[i].value + '">' +
-                '</div>' +
-                '<div class="form-group edit-key-values">' +
-                '<span class="fw-stack fw-lg">' +
-                '<i class="fw fw-circle-outline fw-stack-2x fw-inverse"></i>' +
-                '<i id="editIcon" class="fw  fw-edit fw-stack-1x fw-inverse"></i>' +
-                '<i id="saveIcon" class="fw  fw-save fw-stack-1x fw-inverse" style="display: none"></i>' +
-                '</span>' +
-                '<span class="fw-stack fw-lg">' +
-                '<i class="fw fw-circle-outline fw-stack-2x fw-inverse"></i>' +
-                '<i class="fw fw-cancel fw-stack-1x fw-inverse"></i>' +
-                '</span>' +
-                '</div>' +
-                '</div>');
+                '<div class="row"><div id="push"></div><div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">No tags are created yet. </div></div>');
+        } else {
+            for (var i = 0; i < parsedResult.length; i++) {
+                $(".tag-list").prepend(
+                    '<div class="form-inline  property-seperator custom-env-class-for-demo">' +
+                    '<div class="form-group">' +
+                    '<label class="sr-only" for="key">Key</label>' +
+                    '<input type="text" class="form-control tag-key" id="key" placeholder="Key" readonly value="' + parsedResult[i].key + '">' +
+                    '</div>' +
+                    '<div class="form-group">' +
+                    '<label class="sr-only" for="value">Value</label>' +
+                    '<input type="text" class="form-control tag-value" id="value" placeholder="Value" readonly value="' + parsedResult[i].value + '">' +
+                    '</div>' +
+                    '<div class="form-group edit-key-values">' +
+                    '<span class="fw-stack fw-lg">' +
+                    '<i class="fw fw-circle-outline fw-stack-2x fw-inverse"></i>' +
+                    '<i id="editIcon" class="fw  fw-edit fw-stack-1x fw-inverse"></i>' +
+                    '<i id="saveIcon" class="fw  fw-save fw-stack-1x fw-inverse" style="display: none"></i>' +
+                    '</span>' +
+                    '<span class="fw-stack fw-lg">' +
+                    '<i class="fw fw-circle-outline fw-stack-2x fw-inverse"></i>' +
+                    '<i class="fw fw-delete fw-stack-1x fw-inverse"></i>' +
+                    '</span>' +
+                    '</div>' +
+                    '</div>');
+            }
         }
 
         $(".add-tag").click(function () {
@@ -128,6 +133,7 @@ $(document).ready(function () {
         });
 
         $(document).on('click', '.fw-edit', function () {
+            $(this).parent().parent().find('.fw-delete').removeClass('fw-delete').addClass('fw-cancel');
             $(this).parent().parent().parent().find('#key')[0].readOnly = false;
             $(this).parent().parent().parent().find('#value')[0].readOnly = false;
             $(this).hide();
@@ -141,14 +147,28 @@ $(document).ready(function () {
             if (isNewRow) {
                 $(this).parent().parent().parent().remove();
                 return;
+            } else {
+                 var keyElem = $(this).parent().parent().parent().find('#key')[0];
+                 var valueElem = $(this).parent().parent().parent().find('#value')[0];
+                 keyElem.readOnly = true;
+                 valueElem.readOnly = true;
+
+                //Hide save icon and display edit icon
+                $(this).parent().parent().find('#saveIcon').hide();
+                $(this).parent().parent().find('#editIcon').show();
+
+                $(this).parent().parent().find('.fw-cancel').removeClass('fw-cancel').addClass('fw-delete');
             }
+        });
+
+        $(document).on('click', '.fw-delete', function() {
             var key = $(this).parent().parent().parent().find('#key')[0].value;
             var value = $(this).parent().parent().parent().find('#value')[0].value;
             var tr = $(this).parent().parent().parent();
-            jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete Tag',content:'Are you sure you want to delete tag ' + key + ' ?',
-                okCallback:function(){
+            jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete Tag',content:'Are you sure you want to delete tag: ' + key + ' ?',
+                yesCallback:function(){
                    deleteTag(key, value, tr);
-                }, cancelCallback:function(){}
+                }, noCallback:function(){}
             });
         });
 
@@ -165,52 +185,54 @@ $(document).ready(function () {
                 versionKey: '<%=versionKey%>',
                 key: updatedKey,
             }, function (result) {
-                if (result && result.trim() == "true") {
+                var isNewAddition = element.hasClass('save-new-entry');
+                if ((isNewAddition || (prevKey && prevKey != updatedKey)) && JSON.parse(result)) {
                     jagg.message({
-                        content: "Environmental variable with key : " + updatedKey + " already exists.",
+                        content: "Tag with key : " + updatedKey + " already exists.",
                         type: 'error'
                     });
                     return;
                 }
-
-                var isNewAddition = element.hasClass('save-new-entry');
                 if (isNewAddition) {
-                    addTag(updatedKey, updatedValue);
-                    element.removeClass('save-new-entry');
-                    element.parent().parent().find('.cancel-new-entry').removeClass('cancel-new-entry');
+                    addTag(updatedKey, updatedValue, element);
                 } else {
-                    updateTag(prevKey, updatedKey, updatedValue);
+                    updateTag(prevKey, updatedKey, updatedValue, element);
                 }
-                element.parent().find('#saveIcon').hide();
-                element.parent().find('#editIcon').show();
-                element.parent().parent().parent().find('#key')[0].readOnly = true;
-                element.parent().parent().parent().find('#value')[0].readOnly = true;
+
             });
         });
     });
 
-    function updateTag(prevKey, newKey, newValue) {
+    function postAddUpdate(element){
+        element.parent().find('#saveIcon').hide();
+        element.parent().find('#editIcon').show();
+        element.parent().parent().parent().find('#key')[0].readOnly = true;
+        element.parent().parent().parent().find('#value')[0].readOnly = true;
+        element.parent().parent().find('.fw-cancel').removeClass('fw-cancel').addClass('fw-delete');
+    }
+
+    function updateTag(prevKey, newKey, newValue, element) {
         jagg.post("../blocks/application/application.jag", {
             action: "updateTag",
             versionKey: '<%=versionKey%>',
             prevKey: prevKey,
             newKey: newKey,
             newValue: newValue
-
         }, function (result) {
-
+            postAddUpdate(element);
         });
     }
 
-    function addTag(newKey, newValue) {
+    function addTag(newKey, newValue, element) {
         jagg.post("../blocks/application/application.jag", {
             action: "addTag",
             versionKey: '<%=versionKey%>',
             key: newKey,
             value: newValue
-
         }, function (result) {
-
+            element.removeClass('save-new-entry');
+            element.parent().parent().find('.cancel-new-entry').removeClass('cancel-new-entry');
+            postAddUpdate(element);
         });
     }
 

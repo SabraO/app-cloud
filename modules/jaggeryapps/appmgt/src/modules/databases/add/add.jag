@@ -343,7 +343,7 @@ var getAllDatabasesInfo = function () {
         log.error(e);
         throw e;
     }
-    return stringify(allDBInfo);
+    return allDBInfo;
 };
 
 var getDatabaseCount = function () {

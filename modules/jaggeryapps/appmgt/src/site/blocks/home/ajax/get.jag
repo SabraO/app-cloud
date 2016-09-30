@@ -24,10 +24,6 @@ include("/jagg/constants.jag");
             action = request.getParameter("action"),
             applicationMod = jagg.module("application"),
             site = require("/site/conf/site.json");
-    if (!jagg.getUser()) {
-        print(UNAUTHORIZED_ERROR_RESPONSE);
-        return;
-    }
     if (action == "getAppIconUrl") {
         var applicationName = request.getParameter("applicationName");
         var selectedRevision = request.getParameter("selectedRevision");

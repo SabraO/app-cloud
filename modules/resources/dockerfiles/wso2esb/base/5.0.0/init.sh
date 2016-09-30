@@ -12,7 +12,7 @@ sed -i "/port=\"9443\"/a    proxyPort=\"443\"" $CARBON_HOME_PATH/repository/conf
 if [ -z ${TENANT_PASSWORD+x} ]; then
     echo "TENANT_PASSWORD is not set.";
     echo "Generating tenant admin password.";
-    TENANT_PASSWORD=${ADMIN_PASS:-$(pwgen -s 12 1)}
+    TENANT_PASSWORD=${TENANT_PASS:-$(pwgen -s 12 1)}
     echo "========================================================================="
     echo "Credentials for the instance:"
     echo
@@ -30,12 +30,12 @@ if [ -z ${ADMIN_PASSWORD+x} ]; then
     echo "ADMIN_PASSWORD is not set.";
     echo "Generating admin password.";
     ADMIN_PASSWORD=${ADMIN_PASS:-$(pwgen -s 12 1)}
-    echo "========================================================================="
-    echo "Credentials for the instance:"
-    echo
-    echo "    user name: admin"
-    echo "    password : $ADMIN_PASSWORD"
-    echo "========================================================================="
+    #echo "========================================================================="
+    #echo "Credentials for the instance:"
+    #echo
+    #echo "    user name: admin"
+    #echo "    password : $ADMIN_PASSWORD"
+    #echo "========================================================================="
     sed -i "s/.*<Password>admin<\/Password>.*/<Password>$ADMIN_PASSWORD<\/Password>/" $CARBON_HOME_PATH/repository/conf/user-mgt.xml
 else
     echo "ADMIN_PASSWORD set by user.";

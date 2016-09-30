@@ -39,6 +39,7 @@
             <class name="org.wso2.appcloud.integration.test.scenarios.PHPApplicationTestCase"/>
             <class name="org.wso2.appcloud.integration.test.scenarios.JaggeryApplicationTestCase"/>
             <class name="org.wso2.appcloud.integration.test.scenarios.JaggeryAS600M3ApplicationTestCase"/>
+            <class name="org.wso2.appcloud.integration.test.scenarios.ESBApplicationTestCase"/>
 
             <class name="org.wso2.appcloud.integration.test.scenarios.DatabaseTestCase"/>
 

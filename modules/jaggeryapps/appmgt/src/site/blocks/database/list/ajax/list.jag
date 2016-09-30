@@ -26,10 +26,6 @@ var log= new Log();
             action = request.getParameter("action"),
             mod = jagg.module("databases"),
             site = require("/site/conf/site.json");
-    if (!jagg.getUser()) {
-        print(UNAUTHORIZED_ERROR_RESPONSE);
-        return;
-    }
     if (action== "getDatabaseInfoForDataTable") {
         try {
             result  =  mod.generateDatabaseInfoForDataTable();

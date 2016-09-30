@@ -25,6 +25,8 @@ jagg.template("index", function(inputs, outputs, jagg) {
     var appTypeCount = outputs.appTypeCount;
     var appType = outputs.appType;
     var cloudTitle = outputs.cloudTitle;
+    var pageTitle = outputs.pageTitle;
+    var docURL = outputs.docURL;
     var cloudSpecificApplicationRepresentation = outputs.cloudSpecificApplicationRepresentation;
     var log = new Log("index");
     
@@ -85,7 +87,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
 
                     if ($("#item_list").children().length <= 1) {
                         $("#item_list").append($('<div class="col-centered col-md-4 "><div class="cloud-new-content"> ' +
-                         '<h3>Your search "'+finder+'" did not match any' + cloudSpecificApplicationRepresentation + '.</h3></div></div>'));
+                         '<h3>Your search "'+finder+'" did not match any ' + cloudSpecificApplicationRepresentation.toLowerCase() + '.</h3></div></div>'));
                     }
                 }
             });
@@ -132,7 +134,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
                                     '<a href="/appmgt/site/pages/home.jag?applicationKey=' + application.hashId + '">'+
                                     '<i class="fw '+application.appTypeIcon+' fw-2x app-type-icon" data-toggle="tooltip" data-placement="right" title="' + application.appTypeTitle + '"></i>' +
                                      appIcon +
-                                    '<div class="app-name">' + displayName + '</div>' +
+                                    '<div class="app-name ellipsis">' + displayName + '</div>' +
                                     '</a>' +
                                     '<a class="dropdown-toggle app-extra" data-toggle="dropdown">' +
                                         '<i class="fa fa-ellipsis-v"></i>' +
@@ -177,7 +179,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
 
         $('#app_creation_progress_modal').modal({ backdrop: 'static', keyboard: false});
         $("#app_creation_progress_modal").show();
-        $("#modal-title").text("Deleting...");
+        $("#modal-title").text("Deleting the " + cloudSpecificApplicationRepresentation.toLowerCase() + "...");
 
         jagg.post("../blocks/application/application.jag", {
             action:"deleteApplication",
@@ -191,10 +193,10 @@ jagg.template("index", function(inputs, outputs, jagg) {
     }
 
     function deleteApplicationPopUp(appName, applicationHashId){
-        jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete ' + cloudSpecificApplicationRepresentation,content:'Are you sure you want to delete ' + appName + ' ?',
-            okCallback:function(){
+        jagg.popMessage({type:'confirm', modalStatus: true, title:'Delete ' + cloudSpecificApplicationRepresentation,content:'Are you sure you want to delete ' + cloudSpecificApplicationRepresentation.toLowerCase() + ': ' + appName + ' ?',
+            yesCallback:function(){
                deleteApplicationAllVersions(appName, applicationHashId);
-            }, cancelCallback:function(){}
+            }, noCallback:function(){}
         });
     }
 
@@ -243,7 +245,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
             if(finderKey != null){
                 $("#item_list").append($('<div class="col-centered col-md-4 ">' +
                                             '<div class="cloud-new-content">' +
-                                                '<h3>No ' + cloudSpecificApplicationRepresentation + ' found with tag' +
+                                                '<h3>No ' + cloudSpecificApplicationRepresentation.toLowerCase() + ' found with tag' +
                                                         ' key : ' + finderKey +
                                                         ', and value : '  + finderVal +
                                                 '.</h3>' +
@@ -252,7 +254,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
             } else {
                 $("#item_list").append($('<div class="col-centered col-md-4 ">' +
                                             '<div class="cloud-new-content">' +
-                                                '<h3>No ' + cloudSpecificApplicationRepresentation + ' found with tag' +
+                                                '<h3>No ' + cloudSpecificApplicationRepresentation.toLowerCase() + ' found with tag' +
                                                         ' key : ' + finder +
                                                 '.</h3>' +
                                             '</div>' +
@@ -288,7 +290,7 @@ jagg.template("index", function(inputs, outputs, jagg) {
     <% if (applications.length > 0 ) { %>
         <div class="row row-centered app-sort-bar">
             <div class="col-centered col-md-5 search">
-                <input type="text" class="form-control" id="search-apps" placeholder="Search <%=cloudSpecificApplicationRepresentation%>">
+                <input type="text" class="form-control" id="search-apps" placeholder="Search <%=cloudSpecificApplicationRepresentation%>s" maxlength="100">
                 <i class="fa fa-2x fa-search" ></i>
             </div>
         </div>
@@ -303,9 +305,9 @@ jagg.template("index", function(inputs, outputs, jagg) {
                     <a id="app-create-button" class="cu-btn cu-btn-md cu-btn-blue" href="/appmgt/site/pages/select-apptype.jag">
                     <% } %>
                       Create your first <%=cloudSpecificApplicationRepresentation.toLowerCase()%></a>
-                    <!--div class="help">
-                        <i class="fa fa-2x fa-book"></i> Need help ? Read App creation guide first..
-                    </div-->
+                    <div class="help">
+                        <i class="fa fa-2x fa-book"></i> Need help ? Read <%=pageTitle%> <a href="<%=docURL%>" target="_blank">documentation</a>.
+                    </div>
                 </div>
             </div>
         </div>
@@ -321,12 +323,10 @@ jagg.template("index", function(inputs, outputs, jagg) {
         <div class="modal-dialog modal-dialog-margin-top-md ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="col-md-3">
-                        <h3 class="modal-title" id="modal-title"></h3>
-                    </div>
-                    <div class="col-md-9" id="modal-header-spinner">
-                        <i class="fw fw-2x fw-loader2 fw-spin"></i>
-                    </div>
+                    <h3 class="modal-title" id="modal-title"></h3>
+                    <span class="app-creation-loader" id="app-creation-header-loader">
+                        <i class="fw fw-loader2 fw-spin fw-2x pull-right"></i>
+                    </span>
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">

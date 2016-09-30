@@ -45,6 +45,7 @@ public class TenantInitializerServiceComponent {
     public static final String FIRST_NAME = "FirstName";
     public static final String LAST_NAME = "LastName";
     public static final String DEFAULT_EMAIL_PREFIX = "admin@";
+    public static final String DEFAULT_EMAIL_EXT = ".com";
 
     private ListenerManager listenerManager;
 
@@ -56,6 +57,7 @@ public class TenantInitializerServiceComponent {
         String TENANT_ID = System.getenv("TENANT_ID");
         String TENANT_DOMAIN = System.getenv("TENANT_DOMAIN");
         String CREATE_TENANT = System.getenv("CREATE_TENANT");
+        String TENANT_EMAIL = DEFAULT_EMAIL_PREFIX + TENANT_DOMAIN;
 
         if (Boolean.parseBoolean(CREATE_TENANT)) {
             //create tenant if flag is set to true
@@ -69,7 +71,7 @@ public class TenantInitializerServiceComponent {
             tenantInfoBean.setAdminPassword(TENANT_PASSWORD);
             tenantInfoBean.setFirstname(FIRST_NAME);
             tenantInfoBean.setLastname(LAST_NAME);
-            tenantInfoBean.setEmail(DEFAULT_EMAIL_PREFIX + TENANT_DOMAIN);
+            tenantInfoBean.setEmail(TENANT_DOMAIN.contains(".") ? TENANT_EMAIL : (TENANT_EMAIL + DEFAULT_EMAIL_EXT));
             tenantInfoBean.setTenantDomain(TENANT_DOMAIN);
             tenantInfoBean.setTenantId(Integer.parseInt(TENANT_ID));
             tenantInfoBean.setUsagePlan(USAGE_PLAN);

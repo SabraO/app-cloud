@@ -35,7 +35,7 @@ jagg.template("header/default", function(inputs, outputs, jagg) {
     var cloudMgtURL = outputs.cloudMgtURL;
     var changePasswordURL = outputs.changePasswordURL;
     var profileURL = outputs.profileURL;
-
+    var zopimChatId = outputs.zopimChatId;
     if(isGoogleAnalyticsEnabled) {
 %>
            
@@ -52,7 +52,6 @@ ga('send', 'pageview');
 
 </script>
 
-Tag Manager
 
 <!-- Google Tag Manager -->
 <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-WJKF4T"
@@ -69,6 +68,32 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <%
     }
 %>
+
+//----------------------- Zopim Chat -------------------------------
+<script>
+window.$zopim || (function (d, s) {
+    var z = $zopim = function (c) {
+        z._.push(c)
+    }, $ = z.s =
+        d.createElement(s), e = d.getElementsByTagName(s)[0];
+    z.set = function (o) {
+        z.set._.push(o)
+    };
+    z._ = [];
+    z.set._ = [];
+    $.async = !0;
+    $.setAttribute("charset", "utf-8");
+    $.src = "//v2.zopim.com/?"+'<%=zopimChatId%>';
+    z.t = +new Date;
+    $.type = "text/javascript";
+    e.parentNode.insertBefore($, e)
+})(document, "script");
+
+$zopim(function () {
+        $zopim.livechat.setName('<%=loggedInUserName%>');
+        $zopim.livechat.setEmail('<%=loggedInUserName%>');
+});
+</script>
     
 <!-- BOF cloud menu -->
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">

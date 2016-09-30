@@ -59,22 +59,28 @@ jagg.template("leftMenu", function (inputs, outputs, jagg) {
 <div class="left-pane ">
     <ul>
         <li class="<% if (pageName == "Overview") { %>selected<%}%>">
-                <a id="leftMenuOverview" href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>"><i class="fw fw-laptop"></i> Overview</a>
+                <a id="leftMenuOverview" href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>">
+                <i class="left-menu-icon fw fw-laptop"></i>Overview</a>
         </li>
         <li class="<% if (pageName == "Environment Variables") { %>selected<%}%>">
-                <a id="leftMenuEnvVars" href="/appmgt/site/pages/envs.jag?versionKey=<%=versionKey%>&applicationKey=<%=applicationKey%>"><i class="fw fw-gadget"></i> Environment Variables</a>
+                <a id="leftMenuEnvVars" href="/appmgt/site/pages/envs.jag?versionKey=<%=versionKey%>&applicationKey=<%=applicationKey%>">
+                <i class="left-menu-icon fw fw-gadget"></i>Environment Variables</a>
         </li>
         <li class="<% if (pageName == "Tags") { %>selected<%}%>">
-                <a id="leftMenuTagSet" href="/appmgt/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=versionKey%>"><i class="fw fw-tag"></i> Tags</a>
+                <a id="leftMenuTagSet" href="/appmgt/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=versionKey%>">
+                <i class="left-menu-icon fw fw-tag"></i>Tags</a>
         </li>
         <li class="<% if (pageName == "Runtime Logs") { %>selected<%}%>">
-                <a href="/appmgt/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>&versionKey=<%=versionKey%>"><i class="fw fw-hdd"></i>Runtime Logs</a>
+                <a href="/appmgt/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>&versionKey=<%=versionKey%>">
+                <i class="left-menu-icon fw fw-hdd"></i>Runtime Logs</a>
         </li>
         <li class="<% if (pageName == "Custom URL") { %>selected<%}%>">
-                <a href="/appmgt/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fw fw-uri"></i>Custom URL</a>
+                <a href="/appmgt/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>">
+                <i class="left-menu-icon fw fw-uri"></i>Custom URL</a>
         </li>
         <li class="<% if (pageName == "Settings") { %>selected<%}%>">
-                <a href="/appmgt/site/pages/settings.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>"><i class="fw fw-settings"></i>Settings</a>
+                <a href="/appmgt/site/pages/settings.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>">
+                <i class="left-menu-icon fw fw-settings"></i>Settings</a>
         </li>
 
     </ul>

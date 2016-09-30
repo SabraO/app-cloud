@@ -58,24 +58,24 @@ jagg.template("urlmapper", function (inputs, outputs, jagg) { %>
  <div class="clearfix"></div>
 <div id="push"></div>
  <div class="row form-section">
- <div name="customUrlForm" id="customUrlForm">
+ <form name="customUrlForm" id="customUrlForm" method="post" action="">
      <div class="col-md-5 forms">
          <div class="from-group-margin">
             <label><strong>IMPORTANT:</strong> Before giving the domain name here, go to your domain registrar's DNS panel and add a CNAME record pointing to default domain.</label>
          </div>
          <div class="form-group" for="productionVersion">
              <label for="production-Version">Default Domain: </label>
-             <label id="defaultVersion" type="text" class="form-control mygroup" name="productionCustom">
+             <input id="defaultVersion" type="text" class="form-control mygroup" name="defaultVersion" disabled style="cursor:text"/>
          </div>
          <div class="form-group" for="productionCustom">
-            <label for="production-Custom">Custom Domain: </label>
+            <label for="productionCustom">Custom Domain: </label>
 
              <div class="input-group" >
                  <input type="text" class="form-control mygroup" id="productionCustom" name="productionCustom"
-                 placeholder="Enter your custom URL" value="">
+                 placeholder="Enter your custom URL" value="" />
                      <span class="input-group-btn">
                          <button class="btn btn-info btn-primary" type="button" id="verifyUrl" name="verifyUrl"
-                         onclick="verifyCustomUrl()">Verify URL</button>
+                         onclick="onVerify()">Verify URL</button>
                      </span>
              </div>
 
@@ -98,7 +98,7 @@ jagg.template("urlmapper", function (inputs, outputs, jagg) { %>
              </button>
          </div>
      </div>
- </div>
+ </form>
 </div>
 <div class="clearfix"></div>
 <div id="push"></div>
@@ -111,6 +111,6 @@ jagg.template("urlmapper", function (inputs, outputs, jagg) { %>
 <script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('js/custom/custom.js'))%>"></script>
 <script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('templates/urlmapper/js/customurl.js'))%>"></script>
 <script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('js/custom/loader.js'))%>"></script>
-
+<script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('js/jQueryValidationPlugin-1.14.0/jquery.validate.min.js'))%>"></script>
    <%
 }); %>

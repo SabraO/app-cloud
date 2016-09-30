@@ -52,6 +52,7 @@ jagg.block("header/default", {
         var cloudMgtURL = manager.getPropertyValue(CLOUD_MGT_URL);
         var changePasswordURL = manager.getPropertyValue(CHANGE_PASSWORD_URL);
         var profileURL = manager.getPropertyValue(PROFILE_URL);
+        var zopimChatId = manager.getPropertyValue(ZOPIM_CHAT_ID);
 
         return {
             "user": user,
@@ -68,7 +69,8 @@ jagg.block("header/default", {
             "cloudMgtURL" : cloudMgtURL,
             "cloudIcon" : cloudIcon,
             "changePasswordURL" : changePasswordURL,
-            "profileURL" : profileURL
+            "profileURL" : profileURL,
+            "zopimChatId": zopimChatId
         };
     }
 });

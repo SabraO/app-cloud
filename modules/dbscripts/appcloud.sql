@@ -64,7 +64,6 @@ INSERT INTO `AC_APP_TYPE` (`id`, `name`, `description`) VALUES
 CREATE TABLE IF NOT EXISTS `AppCloudDB`.`AC_RUNTIME` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
-  `repo_url` VARCHAR(250) NULL,
   `image_name` VARCHAR(100) NULL,
   `tag` VARCHAR(45) NOT NULL,
   `description` VARCHAR(1000) NULL,
@@ -76,17 +75,17 @@ ENGINE = InnoDB;
 -- Populate Data to `AppCloudDB`.`ApplicationRuntime`
 -- -----------------------------------------------------
 
-INSERT INTO `AC_RUNTIME` (`id`, `name`, `repo_url`, `image_name`, `tag`, `description`) VALUES
-(1, 'Apache Tomcat 8.0.28 / WSO2 Application Server 6.0.0-M1 - Deprecated (will work until 2016/09/30)', 'registry.docker.appfactory.private.wso2.com:5000', 'wso2as', '6.0.0-m1', 'OS:Debian, JAVA Version:8u72'),
-(2, 'OpenJDK 8 + WSO2 MSF4J 1.0.0 - Deprecated Runtime (Will continue to work until 2016/9/30)', 'registry.docker.appfactory.private.wso2.com:5000', 'msf4j', '1.0.0', 'OS:Debian, JAVA Version:8u72'),
-(3, 'Apache 2.4.10 (PHP Version 7.0.5)', 'registry.docker.appfactory.private.wso2.com:5000','php','5.6', 'OS:Debian, PHP Version:5.6.20'),
-(4, 'Carbon 4.2.0', 'registry.docker.appfactory.private.wso2.com:5000','carbon','4.2.0', 'OS:Debian, Java Version:7u101'),
-(5, 'Jaggery 0.11.0 - Deprecated Runtime (Will continue to work until 2016/9/30)', 'registry.docker.appfactory.private.wso2.com:5000', 'jaggery', '0.11.0', 'OS:Debian, Java Version:7u101'),
-(6, 'Apache Tomcat 8.0.28 / WSO2 Application Server 6.0.0-M2', 'registry.docker.appfactory.private.wso2.com:5000', 'wso2as', '6.0.0-m2', 'OS:Debian, JAVA Version:8u72'),
-(7, 'WSO2 Data Services Server - 3.5.0','registry.docker.appfactory.private.wso2.com:5000', 'wso2dataservice', '3.5.0', 'OS:Debian, Java Version:7u101'),
-(8, 'OpenJDK 8 + WSO2 MSF4J 2.0.0', 'registry.docker.appfactory.private.wso2.com:5000', 'msf4j', '2.0.0', 'OS:Debian, JAVA Version:8u72'),
-(9, 'WSO2 Enterprise Service Bus - 5.0.0','registry.docker.appfactory.private.wso2.com:5000', 'wso2esb', '5.0.0', 'OS:Debian, Java Version:7u101'),
-(10, 'Apache Tomcat 8.0.28 / WSO2 Application Server 6.0.0-M3','registry.docker.appfactory.private.wso2.com:5000', 'wso2as', '6.0.0-m3', 'OS:Debian, JAVA Version:8u72');
+INSERT INTO `AC_RUNTIME` (`id`, `name`, `image_name`, `tag`, `description`) VALUES
+(1, 'Apache Tomcat 8.0.28 / WSO2 Application Server 6.0.0-M1 - Deprecated (will work until 2016/09/30)', 'wso2as', '6.0.0-m1', 'OS:alpine-java, Oracle JDK:8u102'),
+(2, 'OpenJDK 8 + WSO2 MSF4J 1.0.0 - Deprecated Runtime (Will continue to work until 2016/9/30)', 'msf4j', '1.0.0', 'OS:alpine-java, Oracle JDK:8u102'),
+(3, 'Apache 2.4.10 (PHP Version 7.0.5)', 'php', '5.6', 'OS:Debian, PHP Version:5.6.20'),
+(4, 'Carbon 4.2.0', 'carbon','4.2.0', 'OS:alpine-java, Oracle JDK:8u102'),
+(5, 'Jaggery 0.11.0 - Deprecated Runtime (Will continue to work until 2016/9/30)', 'jaggery', '0.11.0', 'OS:alpine-java, Oracle JDK:8u102'),
+(6, 'Apache Tomcat 8.0.28 / WSO2 Application Server 6.0.0-M2', 'wso2as', '6.0.0-m2', 'OS:alpine-java, Oracle JDK:8u102'),
+(7, 'WSO2 Data Services Server - 3.5.0', 'wso2dataservice', '3.5.0', 'OS:alpine-java, Oracle JDK:8u102'),
+(8, 'OpenJDK 8 + WSO2 MSF4J 2.0.0', 'msf4j', '2.0.0', 'OS:alpine-java, Oracle JDK:8u102'),
+(9, 'WSO2 Enterprise Service Bus - 5.0.0', 'wso2esb', '5.0.0', 'OS:Debian, Oracle JDK:8u102'),
+(10, 'Apache Tomcat 8.0.28 / WSO2 Application Server 6.0.0-M3', 'wso2as', '6.0.0-m3', 'OS:alpine-java, Oracle JDK:8u102');
 
 
 

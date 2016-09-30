@@ -40,8 +40,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -822,7 +824,7 @@ public class ApplicationDAO {
     }
 
     /**
-     * Method for getting application hash id by name.
+     * Method for getting application hash id of matching app name.
      *
      * @param dbConnection    database connection
      * @param applicationName application name
@@ -830,7 +832,7 @@ public class ApplicationDAO {
      * @return application hash id
      * @throws AppCloudException
      */
-    public String getApplicationHashIdByName(Connection dbConnection, String applicationName, int tenantId)
+    public String getApplicationHashIdOfMatchingAppName(Connection dbConnection, String applicationName, int tenantId)
             throws AppCloudException {
 
         PreparedStatement preparedStatement = null;
@@ -838,7 +840,7 @@ public class ApplicationDAO {
         String applicationHashId = null;
 
         try {
-            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_APPLICATION_HASH_ID_BY_NAME);
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_APPLICATION_HASH_ID_OF_MATCHING_APP_NAME);
             preparedStatement.setString(1, applicationName);
             preparedStatement.setInt(2, tenantId);
 
@@ -849,7 +851,7 @@ public class ApplicationDAO {
             }
 
         } catch (SQLException e) {
-            String msg = "Error while retrieving application hash id using application name : " + applicationName +
+            String msg = "Error while retrieving application hash id of matching application name : " + applicationName +
                     " in tenant : " + tenantId;
             throw new AppCloudException(msg, e);
         } finally {
@@ -1194,7 +1196,6 @@ public class ApplicationDAO {
                 applicationRuntime.setId(resultSet.getInt(SQLQueryConstants.ID));
                 applicationRuntime.setRuntimeName(resultSet.getString(SQLQueryConstants.NAME));
                 applicationRuntime.setImageName(resultSet.getString(SQLQueryConstants.RUNTIME_IMAGE_NAME));
-                applicationRuntime.setRepoURL(resultSet.getString(SQLQueryConstants.RUNTIME_REPO_URL));
                 applicationRuntime.setTag(resultSet.getString(SQLQueryConstants.RUNTIME_TAG));
                 applicationRuntime.setDescription(resultSet.getString(SQLQueryConstants.DESCRIPTION));
 
@@ -1236,7 +1237,6 @@ public class ApplicationDAO {
             while (resultSet.next()) {
                 applicationRuntime.setId(resultSet.getInt(SQLQueryConstants.ID));
                 applicationRuntime.setImageName(resultSet.getString(SQLQueryConstants.RUNTIME_IMAGE_NAME));
-                applicationRuntime.setRepoURL(resultSet.getString(SQLQueryConstants.RUNTIME_REPO_URL));
                 applicationRuntime.setRuntimeName(resultSet.getString(SQLQueryConstants.NAME));
                 applicationRuntime.setTag(resultSet.getString(SQLQueryConstants.RUNTIME_TAG));
                 applicationRuntime.setDescription(resultSet.getString(SQLQueryConstants.DESCRIPTION));
@@ -2317,6 +2317,36 @@ public class ApplicationDAO {
         } catch (SQLException e) {
             String msg = "Error while checking if version exists for application name: " + applicationName +
                     ", version: " + versionName + " and tenant id: " + tenantId + ".";
+            throw new AppCloudException(msg, e);
+        } finally {
+            DBUtil.closeResultSet(resultSet);
+            DBUtil.closePreparedStatement(preparedStatement);
+        }
+    }
+
+    public Map<Integer, List<Application>> getRunningApplicationsOfAllTenants(Connection dbConnection) throws AppCloudException {
+        Map<Integer, List<Application>> tenantApplications = new HashMap<>();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = dbConnection.prepareStatement(SQLQueryConstants.GET_RUNNING_APPLICATIONS_OF_ALL_TENANTS);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int tenantId = resultSet.getInt("tenant_id");
+                if (tenantApplications.get(tenantId) == null) {
+                    tenantApplications.put(tenantId, new ArrayList<Application>());
+                }
+                Application application = new Application();
+                application.setDefaultVersion(resultSet.getString("VERSION_NAME"));
+                application.setHashId(resultSet.getString("VERSION_HASH_ID"));
+                application.setApplicationName(resultSet.getString("APPLICATION_NAME"));
+                application.setApplicationType(resultSet.getString("APP_TYPE_NAME"));
+                tenantApplications.get(tenantId).add(application);
+            }
+            return tenantApplications;
+        } catch (SQLException e) {
+            String msg = "Error while getting all running applications of all tenants.";
             throw new AppCloudException(msg, e);
         } finally {
             DBUtil.closeResultSet(resultSet);

@@ -31,6 +31,7 @@ jagg.block("application", {
     getOutputs:function (inputs) {
 
         var applicationModule = jagg.module("application");
+        var databaseModule = jagg.module("databases");
         var modManager = jagg.module("manager");
         var runtimes = applicationModule.getAllRuntimes(inputs.appTypeName);
         var appTypePropertyConfPath = jagg.getAppTypePropertyConfFilePath();
@@ -49,14 +50,15 @@ jagg.block("application", {
         var cloudSpecificApplicationRepresentation = modManager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
         var applications = applicationModule.getAllApplications();
 
-        var requestNewAppTypeSubjectMessage = 'Requesting a new runtime for application type: '+inputs.appTypeName+' by tenant: ' + modManager.getTenantDomain();
+        var requestNewAppTypeSubjectMessage = 'Requesting a new runtime for ' + cloudSpecificApplicationRepresentation + ' type: ' + inputs.appTypeName;
         var requestNewAppTypeURL = modManager.getPropertyValue(modManager.getCloudTypeProperties().properties.supportUrl) +
                 '&subject=' + requestNewAppTypeSubjectMessage;
 
-        var requestMoreAppsSubjectMessage = 'Requesting to run more than '+maxAppCount+' applications for tenant: ' + modManager.getTenantDomain();
+        var requestMoreAppsSubjectMessage = 'Requesting to run more than ' + maxAppCount + ' ' + cloudSpecificApplicationRepresentation + 's';
         var requestMoreAppseURL = modManager.getPropertyValue(modManager.getCloudTypeProperties().properties.supportUrl) +
                 '&subject=' + requestMoreAppsSubjectMessage;
-
+        var allDBInfo = databaseModule.getAllDatabasesInfo();
+        var noOfDbs = allDBInfo.length;
 
         return {
             "runtimes" : runtimes,
@@ -72,7 +74,9 @@ jagg.block("application", {
             "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation,
             "applications" : applications,
             "requestNewAppTypeURL" : requestNewAppTypeURL,
-            "requestMoreAppseURL" : requestMoreAppseURL
+            "requestMoreAppseURL" : requestMoreAppseURL,
+            "allDBInfo": allDBInfo,
+            "noOfDbs": noOfDbs
         };
     }
 });

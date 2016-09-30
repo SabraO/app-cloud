@@ -57,7 +57,7 @@ jagg.block("home", {
         var applicationCount = applicationModule.getRunningApplicationVersionCount();
         var cloudSpecificApplicationRepresentation = managerModule.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
 
-        var requestNewAppTypeSubjectMessage = 'Requesting to keep application: '+application.applicationName+' running for an extended period of time in tenant: ' + managerModule.getTenantDomain();
+        var requestNewAppTypeSubjectMessage = 'Requesting to keep ' + cloudSpecificApplicationRepresentation + ' : ' + application.applicationName + ' running for an extended period of time';
         var requestNewAppTypeURL = managerModule.getPropertyValue(managerModule.getCloudTypeProperties().properties.supportUrl) +
                 '&subject=' + requestNewAppTypeSubjectMessage;
 

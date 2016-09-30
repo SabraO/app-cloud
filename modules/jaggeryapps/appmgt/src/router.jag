@@ -30,21 +30,25 @@ var audit = org.wso2.carbon.CarbonConstants.AUDIT_LOG;
 
 if (uriMatcher.match(PAGE_URL)) {
     var args = uriMatcher.elements();
-    try {
-        context.startTenantFlow();
-        context.getThreadLocalCarbonContext().setTenantDomain(tenantDomain, true);
-        context.getThreadLocalCarbonContext().setUsername(jagg.getUser());
-        include(args.suffix);
-        // filtered out get actions
-        if (action != null && !(action.substring(0,3) == 'get')) {
-            audit.info("User : " + jagg.getUser() + ", Action : " + action);
+    if (args.suffix == "site/blocks/user/login/ajax/login.jag" || jagg.getUser()) {
+        try {
+            context.startTenantFlow();
+            context.getThreadLocalCarbonContext().setTenantDomain(tenantDomain, true);
+            context.getThreadLocalCarbonContext().setUsername(jagg.getUser());
+            include(args.suffix);
+            // filtered out get actions
+            if (action != null && !(action.substring(0,3) == 'get')) {
+                audit.info("User : " + jagg.getUser() + ", Action : " + action);
+            }
+        } catch(e) {
+            log.error('error occurred when starting tenant flow in router jag for uri:'+ request.getRequestURI());
+            log.error(e);
+        } finally  {
+            context.endTenantFlow();
         }
-    } catch(e) {
-      log.error('error occurred when starting tenant flow in router jag for uri:'+ request.getRequestURI());
-      log.error(e);
-    }finally  {
-        context.endTenantFlow();
+    } else {
+        response.status = 401;
+        response.content = "Unauthorized Access. Please login to continue.";
     }
-
 }
 %>

@@ -32,7 +32,7 @@ var log=new Log();
             var userName = request.getParameter("userName");
             var password = request.getParameter("password");
             var requestURL = request.getRequestURL();
-            log.debug("Starting login process for username:" + userName + " password:" + password + " requestURL:" + requestURL);
+            log.debug("Starting login process for username:" + userName + " requestURL:" + requestURL);
             var finalResult = {};
             if(!(userName && password)) {
                 finalResult.error = "true";

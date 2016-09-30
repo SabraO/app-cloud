@@ -24,24 +24,20 @@ var mod = jagg.module("application");
 
 (function () {
     var action = request.getParameter("action");
-    if (!jagg.getUser()) {
-        print(UNAUTHORIZED_ERROR_RESPONSE);
-        return;
-    }
 
     if (action == "updateDefaultVersion") {
         var applicationName = request.getParameter("applicationName");
         var defaultVersion = request.getParameter("defaultVersion");
         try {
             if (mod.getDefaultVersion(applicationName) == defaultVersion) {
-                response.status = 500;
+                response.status = 400;
                 response.content = "Version: " + defaultVersion + " is the default version. Please select another version.";
             } else {
                 if (mod.isVersionExist(applicationName, defaultVersion)) {
                     var result = mod.changeMappedDomain(applicationName, defaultVersion);
                     print(result);
                 } else {
-                    response.status = 500;
+                    response.status = 400;
                     response.content = "Application version does not exist. Please select valid version.";
                 }
             }

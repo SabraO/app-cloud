@@ -20,7 +20,10 @@
  * @param element - html element containing the select2 container
  * @returns {*|jQuery}
  */
-function initSelect2(data, element, path) {
+
+ var allDBInfoForSelect2;
+function initSelect2(data, element, path, allDBInfo) {
+    allDBInfoForSelect2 = allDBInfo;
     /* Initialize select2 selection box for html element*/
     var $select = $(element).select2({
         placeholder: "Value",
@@ -81,16 +84,24 @@ function initSelect2(data, element, path) {
     });
 
     $(".select2-search__field").on('input', function(e) {
+
         if ($(this).val() == "database:") {
             var dbs;
-            jagg.post("../blocks/database/list/ajax/list.jag", {
-                action: "getAllDatabasesInfo"
-            }, function(result) {
-                dbs = JSON.parse(result);
+            if(allDBInfoForSelect2){
+                dbs = allDBInfoForSelect2;
                 $select.trigger('change');
                 $select = initSelect2(dbs, element, "database:");
                 $select.select2('open');
-            });
+            } else {
+                jagg.post("../blocks/database/list/ajax/list.jag", {
+                    action: "getAllDatabasesInfo"
+                }, function(result) {
+                    dbs = JSON.parse(result);
+                    $select.trigger('change');
+                    $select = initSelect2(dbs, element, "database:");
+                    $select.select2('open');
+                });
+            }
         }
     });
 

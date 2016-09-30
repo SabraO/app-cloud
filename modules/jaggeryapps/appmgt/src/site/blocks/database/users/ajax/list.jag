@@ -27,10 +27,6 @@ var result = {};
 	var mod, obj, result,
 	action = request.getParameter("action"),
 	site = require("/site/conf/site.json");
-    if (!jagg.getUser()) {
-        print(UNAUTHORIZED_ERROR_RESPONSE);
-        return;
-    }
 	if (action == "deleteUser") {
 		mod = jagg.module("databases");
 		var name = request.getParameter("name");
@@ -56,8 +52,8 @@ var result = {};
             log.error(e);
             isDatabaseUserExists = false;
         }
-        if(isDatabaseUserExists){
-            response.status = 500;
+        if(isDatabaseUserExists == "true"){
+            response.status = 400;
             response.content = "Database user already exists";
             return;
         }
@@ -92,7 +88,7 @@ var result = {};
             result = mod.isDatabaseUserExists(username);
             print(result);
         } catch (e) {
-            var msg = "Error while checking  existance for database user : " + username;
+            var msg = "Error while checking  existence for database user : " + username;
             log.error(msg);
             log.error(e);
             print("false");

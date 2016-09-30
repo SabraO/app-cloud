@@ -18,9 +18,13 @@
  * /
  */
 
+var contentInvalidErrorMsg = "";
+var customURLValidationOpts = {};
+
 // page initialization
 $(document).ready(function () {
-    $("#defaultVersion").text(defaultHostName);
+    $("#defaultVersion").val(defaultHostName);
+    $("#defaultVersion").addClass("cursorText");
     if(customURL != "null"){
         $('#productionCustom').val(stripedUrl(customURL));
         uiElementStateChange(true, true, true);
@@ -29,7 +33,42 @@ $(document).ready(function () {
         $('#updateCustomUrl').prop('disabled', true);
         showUpdateButton();
     }
+
+    customURLValidationOpts = {
+        rules: {                                         // validation rules
+            productionCustom: {                          // custom domain filed
+                required: true,
+                verifyCustomUrl: true,
+            }
+        },
+        onsubmit: false,
+        onfocusout: function (element, event) {},
+        highlight: function (element, errorClass, validClass) {},
+        unhighlight: function (element, errorClass, validClass) {},
+        showErrors: function (event, validator) {
+            this.defaultShowErrors();
+        },
+        errorPlacement: function (error, element) {
+            if ($(element).parent().closest('div').hasClass("input-group")) {
+                error.insertAfter($(element).closest('div'));
+            } else {
+                error.insertAfter(element);
+            }
+        }
+    };
+
+    $("#customUrlForm").validate(customURLValidationOpts);
+    $.validator.addMethod("verifyCustomUrl", verifyCustomUrl, getContentInvalidErrorMsg);
 });
+
+function onVerify(){
+    var validator = $("#customUrlForm").validate(customURLValidationOpts);
+    validator.element( "#productionCustom" );
+}
+
+function getContentInvalidErrorMsg(){
+    return contentInvalidErrorMsg;
+}
 
 function setExistingCustomUrl() {
     if (customUrl !== "null") {
@@ -45,13 +84,8 @@ function setExistingCustomUrl() {
 function verifyCustomUrl() {
     var pointedUrl = defaultHostName;
     var customUrl = $('#productionCustom').val().trim();
-
     if (!checkHostNamePattern(customUrl)) {
-        jagg.message({
-            content: "Domain name format is invalid. Please add correctly formatted domain name",
-            type: 'error',
-            id: 'view_log'
-        });
+        contentInvalidErrorMsg = "Domain name format is invalid. Please add correctly formatted domain name";
     } else {
         jagg.post("../blocks/urlmapper/urlmapper.jag", {
                 action: "verifyCustomDomain",
@@ -59,7 +93,7 @@ function verifyCustomUrl() {
                 pointedUrl: pointedUrl
             }, verifyCustomUrlSuccess,
             function (jqXHR, textStatus, errorThrown) {
-                jagg.message({content: jqXHR.responseText, type: 'error', id: 'view_log'});
+                contentInvalidErrorMsg = jqXHR.responseText;
             });
     }
 }

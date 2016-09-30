@@ -26,7 +26,51 @@ var messageTimer;
                                async:true,
                                cache:false,
                                success:callback,
-                               error:error
+                               error: function (jqXHR, textStatus, errorThrown ) {
+                                   if (jqXHR.status == 401) {
+                                       jagg.infoMessage({
+                                           type: 'confirm',
+                                           modalStatus: true,
+                                           content: 'Your session has timed out due to inactivity and will be reloaded shortly.',
+                                           okCallback: function() {
+                                               window.location.reload();
+                                           }
+                                       });
+                                   } else {
+                                       return jqXHR;
+                                   }
+                               }
+        });
+    };
+
+    jagg.infoMessage = function(params) {
+        return noty({
+            theme: 'wso2',
+            layout: 'topCenter',
+            type: 'confirm',
+            closeWith: ['button', 'click'],
+            modal: (params.modalStatus ? params.modalStatus : false),
+            text: params.content ? params.content : 'Do you want to continue?',
+            buttons: [{
+                addClass: 'btn btn-primary',
+                text: (params.okText ? params.okText : 'OK'),
+                onClick: function($noty) {
+                    $noty.close();
+                    if (isFunction(params.okCallback)) {
+                        params.okCallback();
+                    }
+                }
+            }],
+            animation: {
+                open: {
+                    height: 'toggle'
+                }, // jQuery animate function property object
+                close: {
+                    height: 'toggle'
+                }, // jQuery animate function property object
+                easing: 'swing', // easing
+                speed: 500 // opening & closing animation speed
+            }
         });
     };
 
@@ -159,17 +203,17 @@ var messageTimer;
                         modal: (params.modalStatus ? params.modalStatus : false),
                         text: params.content ? params.content : 'Do you want to continue?',
                         buttons: [
-                            {addClass: 'btn btn-primary', text: (params.okText ? params.okText : 'Ok'), onClick: function($noty) {
+                            {addClass: 'btn btn-primary', text: (params.yesText ? params.yesText : 'Yes'), onClick: function($noty) {
                                 $noty.close();
-                                if (isFunction(params.okCallback)) {
-                                    params.okCallback();
+                                if (isFunction(params.yesCallback)) {
+                                    params.yesCallback();
                                 }
                             }
                             },
-                            {addClass: 'btn btn-default', text: 'Cancel', onClick: function($noty) {
+                            {addClass: 'btn btn-default', text: 'No', onClick: function($noty) {
                                 $noty.close();
-                                if (isFunction(params.cancelCallback)) {
-                                    params.cancelCallback();
+                                if (isFunction(params.noCallback)) {
+                                    params.noCallback();
                                 }
 
                             }

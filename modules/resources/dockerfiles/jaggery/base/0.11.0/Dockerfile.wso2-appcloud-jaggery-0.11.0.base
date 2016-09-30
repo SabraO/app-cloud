@@ -37,6 +37,7 @@ ADD init.sh /init.sh
 COPY $WSO2AS_ZIP $INSTALL_PATH
 RUN cd /home/wso2user/ && unzip $INSTALL_PATH/$WSO2AS_ZIP
 
+COPY client-truststore.jks $INSTALL_PATH/wso2as-5.3.0/repository/resources/security/
 COPY patches/ $INSTALL_PATH/wso2as-5.3.0/repository/components/patches/
 COPY modules/ $INSTALL_PATH/wso2as-5.3.0/modules/
 COPY lib/ $INSTALL_PATH/wso2as-5.3.0/repository/components/lib/

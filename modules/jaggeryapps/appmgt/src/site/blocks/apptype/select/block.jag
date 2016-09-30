@@ -36,7 +36,7 @@ jagg.block("apptype/select", {
             }
         }
         var cloudSpecificApplicationRepresentation = manager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
-        var requestNewAppTypeSubjectMessage = 'Requesting a new application type by tenant: ' + manager.getTenantDomain();
+        var requestNewAppTypeSubjectMessage = 'Requesting a new ' + cloudSpecificApplicationRepresentation + ' type';
         var requestNewAppTypeURL = manager.getPropertyValue(manager.getCloudTypeProperties().properties.supportUrl) +
                 '&subject=' + requestNewAppTypeSubjectMessage;
 

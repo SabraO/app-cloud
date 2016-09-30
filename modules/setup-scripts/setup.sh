@@ -48,6 +48,8 @@ fi
 
 # Build source code
 mvn clean install -Dmaven.test.skip=true -f $APP_CLOUD_SRC_HOME/pom.xml
+#Build extensions
+mvn clean install -Dmaven.test.skip=true -f $APP_CLOUD_SRC_HOME/modules/extensions/pom.xml
 
 # Setting up default carbon database
 MYSQL=`which mysql`
@@ -102,46 +104,40 @@ function as_setup(){
     sed -e "s@AS_HOME@$1@g" $APP_CLOUD_SRC_HOME/modules/setup-scripts/jaggery/site.json > $1/repository/deployment/server/jaggeryapps/appmgt/site/conf/site.json
 
     # copy axis2service to dockerfiles/wso2dataservice
-    cp $APP_CLOUD_SRC_HOME/modules/components/org.wso2.appcloud.dss.integration/target/org.wso2.appcloud.dss.integration-3.0.0-SNAPSHOT.aar $APP_CLOUD_SRC_HOME/modules/resources/dockerfile/wso2dataservice/base/3.5.0/
+    cp $APP_CLOUD_SRC_HOME/modules/extensions/org.wso2.appcloud.dss.integration/target/org.wso2.appcloud.dss.integration-3.0.0-SNAPSHOT.aar $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles/wso2dataservice/base/3.5.0/
 
     # copy esb artifacts to dockerfiles/wso2esb
-    cp $APP_CLOUD_SRC_HOME/modules/components/org.wso2.appcloud.esb.integration/ContainerAPICompositeApplication/target/ContainerAPICompositeApplication_3.0.0-SNAPSHOT.car $APP_CLOUD_SRC_HOME/modules/resources/dockerfile/wso2esb/base/5.0.0/carbonapps/
-    cp $APP_CLOUD_SRC_HOME/modules/components/org.wso2.appcloud.tenant.initializer/target/org.wso2.appcloud.tenant.initializer-3.0.0-SNAPSHOT.jar $APP_CLOUD_SRC_HOME/modules/resources/dockerfile/wso2esb/base/5.0.0/dropins/
+    cp $APP_CLOUD_SRC_HOME/modules/extensions/org.wso2.appcloud.esb.integration/ContainerAPICompositeApplication/target/ContainerAPICompositeApplication_3.0.0-SNAPSHOT.car $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles/wso2esb/base/5.0.0/carbonapps/
+    cp $APP_CLOUD_SRC_HOME/modules/extensions/org.wso2.appcloud.tenant.initializer/target/org.wso2.appcloud.tenant.initializer-3.0.0-SNAPSHOT.jar $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles/wso2esb/base/5.0.0/dropins/
+    cp $APP_CLOUD_SRC_HOME/modules/extensions/org.wso2.appcloud.httpgetprocessor.extensions/target/org.wso2.appcloud.httpgetprocessor.extensions-3.0.0-SNAPSHOT.jar $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles/wso2esb/base/5.0.0/lib/
 
     cp -R $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles $1/repository/deployment/server/jaggeryapps/appmgt/
-
     cp -r $APP_CLOUD_SRC_HOME/modules/setup-scripts/jaggery/modules/* $1/modules/
-
     cp $LIB_LOCATION/org.wso2.carbon.hostobjects.sso_4.2.1.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/nimbus-jose-jwt_2.26.1.wso2v2.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/commons-codec-1.10.0.wso2v1.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/commons-compress-1.9.0.wso2v1.jar $1/repository/components/dropins/
-
     cp $LIB_LOCATION/docker-client-1.0.10.wso2v1.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/jackson-annotations-2.7.3.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/jackson-core-2.7.3.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/jackson-databind-2.7.3.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/jackson-dataformat-yaml-2.7.3.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/slf4j-api-1.7.12.wso2v1.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/snakeyaml-1.15.jar $1/repository/components/dropins/
     cp $SS_HOME/repository/components/plugins/org.wso2.carbon.rssmanager.common_4.2.0.jar $1/repository/components/dropins/
-
+    cp $LIB_LOCATION/jackson-annotations-2.7.5.jar $1/repository/components/dropins/
+    cp $LIB_LOCATION/jackson-core-2.7.5.jar $1/repository/components/dropins/
+    cp $LIB_LOCATION/jackson-databind-2.7.5.jar $1/repository/components/dropins/
+    cp $LIB_LOCATION/jackson-dataformat-yaml-2.7.5.jar $1/repository/components/dropins/
+    cp $LIB_LOCATION/slf4j-api-1.7.13.jar $1/repository/components/dropins/
+    cp $LIB_LOCATION/snakeyaml-1.17.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/mysql-connector-java-5.1.27-bin.jar $1/repository/components/lib/
-
     cp $LIB_LOCATION/junixsocket-common-2.0.4.wso2v1.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/logging-interceptor-2.7.2.wso2v1.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/okhttp-2.7.2.wso2v1.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/okhttp-ws-2.7.2.wso2v1.jar $1/repository/components/dropins/
+    cp $LIB_LOCATION/logging-interceptor-2.7.5.wso2v1.jar $1/repository/components/dropins/
+    cp $LIB_LOCATION/okhttp-2.7.5.wso2v1.jar $1/repository/components/dropins/
+    cp $LIB_LOCATION/okhttp-ws-2.7.5.wso2v1.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/okio-1.6.0.wso2v1.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/validation-api-1.1.0.Final.jar $1/repository/components/dropins/
-
-    cp $LIB_LOCATION/kubernetes-client-1.3.76.wso2v1.jar $1/repository/components/dropins/
+    cp $LIB_LOCATION/kubernetes-client-1.3.104.wso2v1.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/dnsjava-2.1.7.wso2v1.jar $1/repository/components/dropins/
     cp $LIB_LOCATION/json-20160212.jar $1/repository/components/dropins/
-    cp $LIB_LOCATION/fabric8-utils-2.2.100.jar $1/repository/components/dropins/
-
-    cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/datasources/master-datasources.xml $1/repository/conf/datasources/
-    cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/datasources/appcloud-datasources.xml $1/repository/conf/datasources/
+    cp $LIB_LOCATION/fabric8-utils-2.2.144.jar $1/repository/components/dropins/
+    cp $CONF_LOCATION/$AS_VERSION/repository/conf/datasources/master-datasources.xml $1/repository/conf/datasources/
+    cp $CONF_LOCATION/$AS_VERSION/repository/conf/datasources/appcloud-datasources.xml $1/repository/conf/datasources/
     cp $APP_CLOUD_SRC_HOME/modules/components/org.wso2.appcloud.core/target/org.wso2.appcloud.core-3.0.0-SNAPSHOT.jar $1/repository/components/dropins/
     cp $APP_CLOUD_SRC_HOME/modules/components/org.wso2.appcloud.provisioning.runtime/target/org.wso2.appcloud.provisioning.runtime-3.0.0-SNAPSHOT.jar $1/repository/components/dropins/
     cp $APP_CLOUD_SRC_HOME/modules/components/org.wso2.appcloud.common/target/org.wso2.appcloud.common-3.0.0-SNAPSHOT.jar $1/repository/components/dropins/
@@ -149,12 +145,13 @@ function as_setup(){
     cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/appcloud/appcloud.properties $1/repository/conf/appcloud/
     cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/security/authenticators.xml $1/repository/conf/security/
     cp -r $PATCH_LOCATION/wso2as-5.2.1/* $1/repository/components/patches/
+    cp $CONF_LOCATION/$AS_VERSION/repository/conf/carbon.xml $1/repository/conf/
+    cp $CONF_LOCATION/$AS_VERSION/bin/wso2server.sh $1/bin/
     cp -r $APP_CLOUD_SRC_HOME/modules/webapps/appCloudTierapi/target/tierapi.war $1/repository/deployment/server/webapps/
-
     sed -i -e "s|AS_HOME|$1|g" $1/repository/conf/appcloud/appcloud.properties
 }
-function as_cluster_setup(){
 
+function as_cluster_setup(){
     mkdir -p $SETUP_DIR/AS_NODE1
     mkdir -p $SETUP_DIR/AS_NODE2
     unzip -q $PACK_DIR/$AS_VERSION.zip -d $SETUP_DIR/AS_NODE1/
@@ -170,8 +167,8 @@ function as_cluster_setup(){
     as_setup $AS_HOME2
     echo "AS Node2 setup done successfully!"
 
-    cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/carbon.xml $AS_HOME1/repository/conf/
-    cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/carbon.xml $AS_HOME2/repository/conf/
+    cp $CONF_LOCATION/$AS_VERSION/repository/conf/carbon.xml $AS_HOME1/repository/conf/
+    cp $CONF_LOCATION/$AS_VERSION/repository/conf/carbon.xml $AS_HOME2/repository/conf/
     sed -i -e "s/<Offset>0<\/Offset>/<Offset>4<\/Offset>/g" $AS_HOME2/repository/conf/carbon.xml
     sed -i -e "s/<HostName>localhost<\/HostName>/<HostName>$IP<\/HostName>/g" $AS_HOME1/repository/conf/carbon.xml
     sed -i -e "s/<HostName>localhost<\/HostName>/<HostName>$IP<\/HostName>/g" $AS_HOME2/repository/conf/carbon.xml
@@ -180,19 +177,15 @@ function as_cluster_setup(){
 
     sed -i -e "s/https:\/\/localhost:9443\/appmgt\/jagg\/jaggery_acs.jag/http:\/\/$IP\/appmgt\/jagg\/jaggery_acs.jag/g" $IS_HOME/repository/conf/security/sso-idp-config.xml
 
-    cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/axis2/axis2.xml $AS_HOME1/repository/conf/axis2/
-    cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/axis2/axis2.xml $AS_HOME2/repository/conf/axis2/
     cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/security/authenticators.xml $AS_HOME1/repository/conf/security/
     cp $CONF_LOCATION/wso2as-5.2.1/repository/conf/security/authenticators.xml $AS_HOME2/repository/conf/security/
     cp -r $PATCH_LOCATION/wso2as-5.2.1/* $AS_HOME1/repository/components/patches/
     cp -r $PATCH_LOCATION/wso2as-5.2.1/* $AS_HOME2/repository/components/patches/
-    
-    echo "AS cluster setup successfully done!"
 
+    echo "AS cluster setup successfully done!"
 }
 
 function as_non_cluster_setup(){
-
     unzip -q $PACK_DIR/$AS_VERSION.zip -d $SETUP_DIR
     AS_HOME=$SETUP_DIR/$AS_VERSION/
 
@@ -203,11 +196,11 @@ function as_non_cluster_setup(){
 
 echo "Updaing IS node with new configuraitons"
 cp $LIB_LOCATION/mysql-connector-java-5.1.27-bin.jar $IS_HOME/repository/components/lib/
-cp $CONF_LOCATION/wso2is-5.0.0/repository/conf/datasources/master-datasources.xml $IS_HOME/repository/conf/datasources/
-cp $CONF_LOCATION/wso2is-5.0.0/repository/conf/identity.xml $IS_HOME/repository/conf/
-cp $CONF_LOCATION/wso2is-5.0.0/repository/conf/user-mgt.xml $IS_HOME/repository/conf/
-cp $CONF_LOCATION/wso2is-5.0.0/repository/conf/carbon.xml $IS_HOME/repository/conf/
-cp $CONF_LOCATION/wso2is-5.0.0/repository/conf/security/sso-idp-config.xml $IS_HOME/repository/conf/security/sso-idp-config.xml
+cp $CONF_LOCATION/$IS_VERSION/repository/conf/datasources/master-datasources.xml $IS_HOME/repository/conf/datasources/
+cp $CONF_LOCATION/$IS_VERSION/repository/conf/identity.xml $IS_HOME/repository/conf/
+cp $CONF_LOCATION/$IS_VERSION/repository/conf/user-mgt.xml $IS_HOME/repository/conf/
+cp $CONF_LOCATION/$IS_VERSION/repository/conf/carbon.xml $IS_HOME/repository/conf/
+cp $CONF_LOCATION/$IS_VERSION/repository/conf/security/sso-idp-config.xml $IS_HOME/repository/conf/security/sso-idp-config.xml
 
 
 echo "Updaing AS node with new configurations"
@@ -223,21 +216,21 @@ echo "Updating SS node with new configurations"
 cp $LIB_LOCATION/mysql-connector-java-5.1.27-bin.jar $SS_HOME/repository/components/lib/
 cp $LIB_LOCATION/nimbus-jose-jwt_2.26.1.wso2v2.jar $SS_HOME/repository/components/dropins/
 cp $LIB_LOCATION/signedjwt-authenticator_4.3.3.jar $SS_HOME/repository/components/dropins/
-cp $CONF_LOCATION/wso2ss-1.1.0/repository/conf/datasources/master-datasources.xml $SS_HOME/repository/conf/datasources/
-cp $CONF_LOCATION/wso2ss-1.1.0/repository/conf/user-mgt.xml $SS_HOME/repository/conf/
-cp $CONF_LOCATION/wso2ss-1.1.0/repository/conf/carbon.xml $SS_HOME/repository/conf/
-cp $CONF_LOCATION/wso2ss-1.1.0/repository/conf/etc/* $SS_HOME/repository/conf/etc/
-cp -r $PATCH_LOCATION/wso2ss-1.1.0/* $SS_HOME/repository/components/patches/
+cp $CONF_LOCATION/$SS_VERSION/repository/conf/datasources/master-datasources.xml $SS_HOME/repository/conf/datasources/
+cp $CONF_LOCATION/$SS_VERSION/repository/conf/user-mgt.xml $SS_HOME/repository/conf/
+cp $CONF_LOCATION/$SS_VERSION/repository/conf/carbon.xml $SS_HOME/repository/conf/
+cp $CONF_LOCATION/$SS_VERSION/repository/conf/etc/* $SS_HOME/repository/conf/etc/
+cp -r $PATCH_LOCATION/$SS_VERSION/* $SS_HOME/repository/components/patches/
 
 echo "Updating DAS node with new configurations"
-cp $CONF_LOCATION/wso2das-3.0.1/repository/conf/datasources/master-datasources.xml $DAS_HOME/repository/conf/datasources/
-cp $CONF_LOCATION/wso2das-3.0.1/repository/conf/datasources/analytics-datasources.xml $DAS_HOME/repository/conf/datasources/
+cp $CONF_LOCATION/$DAS_VERSION/repository/conf/datasources/master-datasources.xml $DAS_HOME/repository/conf/datasources/
+cp $CONF_LOCATION/$DAS_VERSION/repository/conf/datasources/analytics-datasources.xml $DAS_HOME/repository/conf/datasources/
 cp $LIB_LOCATION/mysql-connector-java-5.1.27-bin.jar $DAS_HOME/repository/components/lib/
 mkdir -p $DAS_HOME/repository/deployment/server/carbonapps
-cp $CONF_LOCATION/wso2das-3.0.1/repository/deployment/server/capps/*.car $DAS_HOME/repository/deployment/server/carbonapps
-cp -r $CONF_LOCATION/wso2das-3.0.1/repository/deployment/server/jaggeryapps/monitoring $DAS_HOME/repository/deployment/server/jaggeryapps/
-cp -r $CONF_LOCATION/wso2das-3.0.1/modules $DAS_HOME/
-cp $CONF_LOCATION/wso2das-3.0.1/repository/conf/carbon.xml $DAS_HOME/repository/conf/
+cp $CONF_LOCATION/$DAS_VERSION/repository/deployment/server/capps/*.car $DAS_HOME/repository/deployment/server/carbonapps
+cp -r $CONF_LOCATION/$DAS_VERSION/repository/deployment/server/jaggeryapps/monitoring $DAS_HOME/repository/deployment/server/jaggeryapps/
+cp -r $CONF_LOCATION/$DAS_VERSION/modules $DAS_HOME/
+cp $CONF_LOCATION/$DAS_VERSION/repository/conf/carbon.xml $DAS_HOME/repository/conf/
 
 
 sh $IS_HOME/bin/wso2server.sh -Dsetup &

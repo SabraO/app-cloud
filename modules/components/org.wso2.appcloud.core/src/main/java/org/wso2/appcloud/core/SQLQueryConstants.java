@@ -148,8 +148,8 @@ public class SQLQueryConstants {
     public static final String GET_APPLICATION_NAME_BY_HASH_ID =
             "SELECT name FROM AC_APPLICATION WHERE hash_id = ? AND tenant_id=?";
 
-    public static final String GET_APPLICATION_HASH_ID_BY_NAME =
-            "SELECT hash_id FROM AC_APPLICATION WHERE name=? AND tenant_id=?";
+    public static final String GET_APPLICATION_HASH_ID_OF_MATCHING_APP_NAME =
+            "SELECT hash_id FROM AC_APPLICATION WHERE name LIKE ? AND tenant_id=?";
 
     public static final String GET_APPLICATION_ID =
             "SELECT id FROM AC_APPLICATION WHERE hash_id=? AND tenant_id=?";
@@ -244,6 +244,12 @@ public class SQLQueryConstants {
             "SELECT * FROM AC_APPLICAION_CONTEXTS WHERE tenant_id=? AND version_id=?";
 
     public static final String GET_APPLICATION_ICON = "SELECT id FROM AC_APP_ICON WHERE application_id=?";
+
+    public static final String GET_RUNNING_APPLICATIONS_OF_ALL_TENANTS =
+            "SELECT AC_VERSION.name as VERSION_NAME, AC_VERSION.hash_id as VERSION_HASH_ID, AC_VERSION.tenant_id, " +
+                    "AC_APPLICATION.name AS APPLICATION_NAME, AC_APP_TYPE.name AS APP_TYPE_NAME FROM AC_VERSION INNER " +
+                    "JOIN AC_APPLICATION ON AC_VERSION.application_id=AC_APPLICATION.id INNER JOIN AC_APP_TYPE " +
+                    "ON AC_APPLICATION.app_type_id = AC_APP_TYPE.id WHERE AC_VERSION.status='running';";
 
     /* Update Queries */
 

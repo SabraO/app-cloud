@@ -28,8 +28,12 @@ jagg.block("envs", {
 
     getOutputs: function (inputs) {
         var applicationModule = jagg.module("application");
+        var databaseModule = jagg.module("databases");
         var selectedRevision = applicationModule.getSelectedRevisionFromSession(inputs.applicationKey);
         var application = applicationModule.getApplication(inputs.applicationKey);
+        var allDBInfo = databaseModule.getAllDatabasesInfo();
+        var noOfDbs = allDBInfo.length;
+
         if (!selectedRevision && application.defaultVersion) {
             selectedRevision = application.defaultVersion;
         }
@@ -37,7 +41,9 @@ jagg.block("envs", {
         var cloudSpecificApplicationRepresentation = modManager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
         return {
             "selectedRevision": selectedRevision,
-            "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation
+            "cloudSpecificApplicationRepresentation" : cloudSpecificApplicationRepresentation,
+            "allDBInfo": allDBInfo,
+            "noOfDbs": noOfDbs
         };
     }
 

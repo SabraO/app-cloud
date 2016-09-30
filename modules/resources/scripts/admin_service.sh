@@ -54,6 +54,12 @@ if [ $ACTION = "help" ]; then
     echo "***For update application version container specification***"
     echo "./admin_service.sh updateConSpec <tenant> <app> <version> <cpu> <memory>"
     echo -e "\n"
+    echo "***For redeploy application versions***"
+    echo "./admin_service.sh redeployApplicationVersion <tenantDomain> <applicationName> <applicationVersionHashId> <applicationVersion> <applicationType>"
+    echo -e "\n"
+    echo "***For get application version of tenants***"
+    echo "./admin_service.sh getApplicationVersionsOfTenants"
+    echo -e "\n"
 elif [ $ACTION = "whiteListAppVersion" ]; then
     echo "----------White list application version----------" >> $LOGFILE
     curl -b cookies  -v -X POST -k $SERVICE_URL/appmgt/site/blocks/admin/admin.jag -d "action=whiteListApplicationVersion&tenantDomain=$2&applicationName=$3&applicationRevision=$4" >> $LOGFILE 2>&1
@@ -85,5 +91,12 @@ elif [ $ACTION = "getTenantMaxDatabaseCount" ]; then
 elif [ $ACTION = "updateConSpec" ]; then
     echo "----------Update container specification----------" >> $LOGFILE
     curl -b cookies -v -X POST -k $SERVICE_URL/appmgt/site/blocks/admin/admin.jag -d "action=updateConSpec&tenantDomain=$2&applicationName=$3&applicationRevision=$4&memory=$5&cpu=$6" >> $LOGFILE 2>&1
+elif [ $ACTION = "redeployApplicationVersion" ]; then
+    echo "----------redeployApplicationVersion----------" >> $LOGFILE
+    curl -b cookies -v -X POST -k $SERVICE_URL/appmgt/site/blocks/admin/admin.jag -d "action=redeployApplicationVersion&tenantDomain=$2&applicationName=$3&applicationVersionHashId=$4&applicationVersion=$5&applicationType=$6" >> $LOGFILE 2>&1
+elif [ $ACTION = "getApplicationVersionsOfTenants" ]; then
+    echo "----------getApplicationVersionsOfTenants----------" >> $LOGFILE
+    curl -b cookies -O -X POST -k $SERVICE_URL/appmgt/site/blocks/admin/admin.jag -d "action=getApplicationVersionsOfTenants" >> $LOGFILE 2>&1
     echo -e "\n" >> $LOGFILE
 fi
+   

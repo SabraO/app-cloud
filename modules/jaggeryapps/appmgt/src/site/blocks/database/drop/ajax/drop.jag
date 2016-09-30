@@ -22,10 +22,6 @@ include("/jagg/jagg.jag");
 (function () {
     var mod,
             action = request.getParameter("action");
-    if (!jagg.getUser()) {
-        print(UNAUTHORIZED_ERROR_RESPONSE);
-        return;
-    }
     if (action == "dropDatabase") {
         mod = jagg.module("databases");
         var databaseName = request.getParameter("databaseName");

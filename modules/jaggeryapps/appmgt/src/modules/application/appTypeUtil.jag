@@ -88,7 +88,8 @@ MSSAppTypeUtil.prototype.getEndpoints = function (deploymentUrl, versionId) {
 
 ESBAppTypeUtil.prototype.getEndpoints = function (deploymentUrl, versionId) {
     var tenantDomain = modManager.getTenantDomain();
-    var containerApiUrl = deploymentUrl + "/t/" + tenantDomain + "/container/endpoints";
+    var containerApiUrl = deploymentUrl + "/container/endpoints";
+    var tenantPrefix = "/t/" + tenantDomain;
     var endpoints = null;
 
     try {
@@ -104,12 +105,14 @@ ESBAppTypeUtil.prototype.getEndpoints = function (deploymentUrl, versionId) {
                 for (var i = 0; i < proxies.length; i++) {
                     var proxy = proxies[i];
                     var wsdl1 = deploymentUrl + "/" + (proxy.wsdl[0]).substring((proxy.wsdl[0]).indexOf('services'));
-                    soapEndpoints.push({name : proxy.name, wsdl :wsdl1});
+		     var wsdlWithoutTenant = wsdl1.replace(tenantPrefix, "");
+                    soapEndpoints.push({name : proxy.name, wsdl :wsdlWithoutTenant});
                 }
             } else {
                 var proxy = proxies;
                 var wsdl1 = deploymentUrl + "/" + (proxy.wsdl[0]).substring((proxy.wsdl[0]).indexOf('services'));
-                soapEndpoints.push({name : proxy.name, wsdl :wsdl1});
+		 var wsdlWithoutTenant = wsdl1.replace(tenantPrefix, "");
+                soapEndpoints.push({name : proxy.name, wsdl :wsdlWithoutTenant});
             }
         }
 
@@ -119,15 +122,17 @@ ESBAppTypeUtil.prototype.getEndpoints = function (deploymentUrl, versionId) {
                 for (var j = 0; j < apis.length; j++) {
                     var api = apis[j];
                     var url = deploymentUrl + api.context;
+		     var urlWithoutTenant = url.replace(tenantPrefix, "");
                     if (api.name != "ContainerAPI") {
-                        restEndpoints.push({"name" : api.name, "url" : url});
+                        restEndpoints.push({"name" : api.name, "url" : urlWithoutTenant});
                     }
                 }
             } else {
                 var api = apis;
                 var url = deploymentUrl + api.context;
+		 var urlWithoutTenant = url.replace(tenantPrefix, "");
                 if (api.name != "ContainerAPI") {
-                    restEndpoints.push({"name" : api.name, "url" : url});
+                    restEndpoints.push({"name" : api.name, "url" : urlWithoutTenant});
                 }
             }
         }

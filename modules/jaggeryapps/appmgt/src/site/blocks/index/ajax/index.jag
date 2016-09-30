@@ -26,11 +26,7 @@
              site = require("/site/conf/site.json");
  
      var log = new Log();
- 
-     if (!jagg.getUser()) {
-         print(UNAUTHORIZED_ERROR_RESPONSE);
-         return;
-     }
+
      if (action == "getTaggedApplicationList") {
  
          var applicationModule = jagg.module("application");

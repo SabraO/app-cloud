@@ -38,7 +38,9 @@ RUN cp -r $RESOURCES_PATH/conf/ $CARBON_HOME_PATH/repository/
 
 RUN sed -i '/<!--HostName>/c<HostName>'$APP_HOST'</HostName>' $CARBON_HOME_PATH/repository/conf/carbon.xml && \
     sed -i '/<!--MgtHostName>/c<MgtHostName>'$APP_HOST'</MgtHostName>' $CARBON_HOME_PATH/repository/conf/carbon.xml
-RUN sed -i '/<!--parameter name=\"WSDLEPRPrefix/c<parameter name=\"WSDLEPRPrefix\" locked=\"false\">'$APP_HOST'</parameter>' $CARBON_HOME_PATH/repository/conf/axis2/axis2.xml
+ 
+RUN sed -ie '1,/<!--parameter name=\"WSDLEPRPrefix\"/ s/<!--parameter name=\"WSDLEPRPrefix\" locked=\"false\">https:\/\/apachehost:port\/somepath<\/parameter-->/<parameter name=\"WSDLEPRPrefix\" locked=\"false\">http:\/\/'$APP_HOST'<\/parameter>/' $CARBON_HOME_PATH/repository/conf/axis2/axis2.xml && \
+    sed -ie '1,/<!--parameter name=\"WSDLEPRPrefix\"/ s/<!--parameter name=\"WSDLEPRPrefix\" locked=\"false\">https:\/\/apachehost:port\/somepath<\/parameter-->/<parameter name=\"WSDLEPRPrefix\" locked=\"false\">https:\/\/'$APP_HOST'<\/parameter>/' $CARBON_HOME_PATH/repository/conf/axis2/axis2.xml
 
 WORKDIR "/"
 

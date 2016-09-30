@@ -25,10 +25,6 @@ var mod = jagg.module("application");
 
 (function () {
     var action = request.getParameter("action");
-    if (!jagg.getUser()) {
-        print(UNAUTHORIZED_ERROR_RESPONSE);
-        return;
-    }
     if (action == "verifyCustomDomain") {
         var customUrl = request.getParameter("customUrl");
         //The url which is generated for application version

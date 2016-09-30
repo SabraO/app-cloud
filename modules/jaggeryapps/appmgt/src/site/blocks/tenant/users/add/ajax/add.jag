@@ -26,10 +26,6 @@ var log = new Log();
             action = request.getParameter("action"),
             site = require("/site/conf/site.json");
             mod = jagg.module("tenant");
-    if (!jagg.getUser()) {
-        print(UNAUTHORIZED_ERROR_RESPONSE);
-        return;
-    }
     if(action=="updateUserRoles"){
         var userName=request.getParameter("userName");
         var newRoles=request.getParameter("rolesToAdd");

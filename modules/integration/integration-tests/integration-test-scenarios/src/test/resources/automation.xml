@@ -315,13 +315,15 @@
                 <runtimeID key="wso2dataservice">7</runtimeID>
                 <runtimeID key="jaggery">5</runtimeID>
                 <runtimeID key="jaggery-as600m3">10</runtimeID>
+                <runtimeID key="wso2esb">9</runtimeID>
             </runtimeIDs>
             <runtimeStartTimeouts>
-                <runtimeStartTimeout key="tomcat">120000</runtimeStartTimeout>
-                <runtimeStartTimeout key="msf4j">60000</runtimeStartTimeout>
-                <runtimeStartTimeout key="php">60000</runtimeStartTimeout>
-                <runtimeStartTimeout key="wso2dataservice">130000</runtimeStartTimeout>
-                <runtimeStartTimeout key="jaggery">130000</runtimeStartTimeout>
+                <runtimeStartTimeout key="tomcat">180000</runtimeStartTimeout>
+                <runtimeStartTimeout key="msf4j">180000</runtimeStartTimeout>
+                <runtimeStartTimeout key="php">180000</runtimeStartTimeout>
+                <runtimeStartTimeout key="wso2dataservice">180000</runtimeStartTimeout>
+                <runtimeStartTimeout key="jaggery">180000</runtimeStartTimeout>
+                <runtimeStartTimeout key="wso2esb">200000</runtimeStartTimeout>
             </runtimeStartTimeouts>
             <sampleAppContents>
                 <sampleAppContent key="tomcat">Hello</sampleAppContent>
@@ -330,6 +332,7 @@
                 <sampleAppContent key="wso2dataservice">CSVSampleService</sampleAppContent>
                 <sampleAppContent key="jaggery">Hello</sampleAppContent>
                 <sampleAppContent key="jaggery-as600m3">Coffee House</sampleAppContent>
+                <sampleAppContent key="wso2esb">HelloProxy</sampleAppContent>
             </sampleAppContents>
 
             <files>
@@ -340,6 +343,7 @@
                 <file type="wso2dataservice">CSVSampleService.car</file>
                 <file type="jaggery">hellojaggery.zip</file>
                 <file type="jaggery-as600m3">coffeeshop.war</file>
+                <file type="wso2esb">HelloESBCompositeApplication_1.0.0.car</file>
             </files>
             <applicationContexts>
                 <context key="war">/</context>
@@ -348,6 +352,7 @@
                 <context key="wso2dataservice">/</context>
                 <context key="jaggery">/hellojaggery</context>
                 <context key="jaggery-as600m3">/coffeeshop</context>
+                <context key="wso2esb">/</context>
             </applicationContexts>
             <containerSpecifications>
                 <spec type="war">3</spec>
@@ -355,6 +360,7 @@
                 <spec type="php">3</spec>
                 <spec type="wso2dataservice">3</spec>
                 <spec type="jaggery">3</spec>
+                <spec type="wso2esb">4</spec>
             </containerSpecifications>
             <properties>
                 <property key="key1">value1</property>
@@ -378,11 +384,13 @@
                 <set key="php">true</set>
                 <set key="wso2dataservice">true</set>
                 <set key="jaggery">true</set>
+                <set key="wso2esb">true</set>
                 <name key="war">1.0.0</name>
                 <name key="msf4j">1.0.0</name>
                 <name key="php">1.0.0</name>
                 <name key="wso2dataservice">1.0.0</name>
                 <name key="jaggery">1.0.0</name>
+                <name key="wso2esb">1.0.0</name>
             </defaultVersion>
 
         </application>

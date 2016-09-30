@@ -75,8 +75,8 @@ jagg.template("runtimeLogs", function (inputs, outputs, jagg) {
                 <div class="div-search">
                     <div class="form-horizontal" role="form">
                         <div class="form-group">
-                            <label for="log-search" class="col-sm-1 control-label">Revision : </label>
-                            <div class="col-sm-4">
+                            <label for="log-search" class="col-md-1 control-label">Revision : </label>
+                            <div class="col-md-4">
                                 <select class="form-control" id="revision" disabled>
                                     <% for(var i = 0; i < revisionsList.length; i++){
                                         if(selectedRevision == revisionsList[i]){
@@ -90,16 +90,16 @@ jagg.template("runtimeLogs", function (inputs, outputs, jagg) {
                                     <% }%>
                                 </select>
                             </div>
-                            <label for="log-search" class="col-sm-1 control-label">Replica : </label>
-                            <div class="col-sm-4">
+                            <label for="log-search" class="col-md-2 control-label">Replica : </label>
+                            <div class="col-md-4">
                                 <select class="form-control" id="replicas">
 
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="log-search" class="col-sm-1 control-label">Search : </label>
-                            <div class="col-sm-4">
+                            <label for="log-search" class="col-md-1 control-label">Search : </label>
+                            <div class="col-md-4">
                                 <div class="input-group">
                                     <input type="text" class="form-control log-search" id="log-search" placeholder="Enter search text">
                                                   <span class="input-group-btn">
@@ -108,8 +108,8 @@ jagg.template("runtimeLogs", function (inputs, outputs, jagg) {
                                                   </span>
                                 </div><!-- /input-group -->
                             </div><!-- /.col-lg-6 -->
-                            <label for="noOfLines" class="col-sm-1 control-label">Number of Lines : </label>
-                            <div class="col-sm-4">
+                            <label for="noOfLines" class="col-md-2 control-label">Number of Lines : </label>
+                            <div class="col-md-4">
                                 <select class="form-control" id="noOfLines">
                                     <option value="100" selected="selected">100</option>
                                     <option value="500">500</option>

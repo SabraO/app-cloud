@@ -162,8 +162,12 @@ button[disabled]{
     text-decoration: none;
 }
 .cu-btn-md {
-    padding: 10px 15px;
+    padding: 10px 12px;
     line-height: 1.3em;
+}
+
+.overview-version-btn {
+    padding-left: 10px;!important;
 }
 .cu-btn-lg {}
 .cu-btn-sm {
@@ -840,7 +844,7 @@ a.btn-action {
     color:#fff;
     bottom: 0;
     padding: 9px 5px 2px;
-    width: 98%;
+    width: 92%;
     min-height: 3em;
     font-size: 17px;
     background-color: #383d44;
@@ -854,7 +858,7 @@ a.btn-action {
 }
 .app-extra{
     right: 0;
-    width: 2%;
+    width: 8%;
     padding: 14px 12px 2px;
     background-color: #434548;
 }
@@ -889,6 +893,7 @@ a.btn-action {
     left: 15%;
     position: absolute;
     width: 85%;
+    margin-bottom: 50px;
 }
 .left-pane {
     position: fixed;
@@ -1058,8 +1063,8 @@ a.btn-action {
     padding: 10px;
     background-color: #8b8b8b;
     border-color: transparent;
-    max-width: 62%;
-    min-width: 40%;
+    -webkit-flex: 1;
+    flex: 1;
 }
 .version-url>a>span{
     white-space: nowrap;
@@ -1188,6 +1193,8 @@ a.btn-action {
 .block-team .block-icon,
 .block-database .block-icon {
     margin-top: 1em;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 .btn-create-version {
     float: right;
@@ -2208,7 +2215,7 @@ a.btn-action {
     }
 }
 
-.tag-list{
+.list-box{
     float: left;
     padding-left: 30px;
 }
@@ -2907,4 +2914,44 @@ ul#appVersionList {
 .ribbon:after {
     right: 0;
 }​
+
+.noleftpadding {
+    padding-left : 0;
+}
+ 
+.left-menu-icon {
+    width: 30px;
+}
+
+.nomarginflex{
+    margin-left: 0px;
+    margin-right: 0px;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.requestbox{
+    margin-left : 0px;
+    padding-top : 10px;
+}
+
+.novertical-padding{
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.fullwidth{
+    width : 100%;
+}
+
+.app-creation-loader i {
+    margin-top: -1em;
+}
+
+.env-error{
+    background-color: #e74c3c !important;
+    font-weight: 900 !important;
+    padding: 10px !important;
+    margin-top: -15px !important;
+}
 

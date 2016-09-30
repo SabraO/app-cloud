@@ -32,5 +32,8 @@ RUN git clone GIT_REPO_URL --branch GIT_REPO_BRANCH --single-branch "$MNT/" && \
     rm -rf $MNT/* && \
     sed -i '/<!--HostName>/c\\t<HostName>'$APP_HOST'</HostName>' $CARBON_HOME_PATH/repository/conf/carbon.xml && \
     sed -i '/<!--MgtHostName>/c\\t<MgtHostName>'$APP_HOST'</MgtHostName>' $CARBON_HOME_PATH/repository/conf/carbon.xml
+    
+RUN sed -ie '1,/<!--parameter name=\"WSDLEPRPrefix\"/ s/<!--parameter name=\"WSDLEPRPrefix\" locked=\"false\">https:\/\/apachehost:port\/somepath<\/parameter-->/<parameter name=\"WSDLEPRPrefix\" locked=\"false\">http:\/\/'$APP_HOST'<\/parameter>/' $CARBON_HOME_PATH/repository/conf/axis2/axis2.xml && \
+    sed -ie '1,/<!--parameter name=\"WSDLEPRPrefix\"/ s/<!--parameter name=\"WSDLEPRPrefix\" locked=\"false\">https:\/\/apachehost:port\/somepath<\/parameter-->/<parameter name=\"WSDLEPRPrefix\" locked=\"false\">https:\/\/'$APP_HOST'<\/parameter>/' $CARBON_HOME_PATH/repository/conf/axis2/axis2.xml
 
 CMD ["bash", "-c", "source /init.sh"]

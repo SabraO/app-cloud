@@ -104,11 +104,11 @@ jagg.template("home", function(inputs, outputs, jagg) {
                     <input id="applicationKey" type="hidden" name="applicationKey" value="<%=applicationKey%>"/>
                 </form>
               </div>
-              <div class="app-desc">
+              <div class="app-desc col-md-6">
                 <h2><%=applicationName%></h2>
                   <h4 class="app-run-time">Runtime: <span id="runtime"><%=selectedApplicationRevision.runtimeName%></span></h4>
                   <h4 class="app-run-time"></h4>
-                <p id="app-description"><%=(application.description)?application.description:''%></p>
+                <div id="app-description" title="<%=(application.description)?application.description:''%>" class="ellipsis"><%=(application.description)?application.description:''%></div>
                 <%if (defaultAppLaunchURL != null) { %>
                 <div class="app-preview-action-bar" id="custom-url-block">
                     <div class="sec prod-url" id="launch-default-url-block">
@@ -127,7 +127,8 @@ jagg.template("home", function(inputs, outputs, jagg) {
         <div class="row padding-bottom-xlg">
           <div class="col-xs-12 col-md-9 col-lg-9">
               <div class="block-general" style="background-color: #303030;">
-                      <div class="col-xs-12 col-md-12 col-lg-8">
+                      <div class="col-xs-12 col-md-12 col-lg-7">
+                        <div class="row nomarginflex">
                           <div class="btn-group pull-left version-number">
                               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <span id="selected-version"><%=selectedRevision%> </span><span class="caret"></span>
@@ -142,7 +143,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                               %>
                               </ul>
                           </div>
-                          <div id="version-url-link" class="version-url">
+                          <div id="version-url-link" class="version-url" title="<%=selectedApplicationRevision.deploymentURL%>">
                           <% if(selectedApplicationRevision.status==APPLICATION_RUNNING){ %>
                             <a id="launch-version-url-a" href="<%=selectedApplicationRevision.deploymentURL%>" target="_blank">
                                 <span><%=selectedApplicationRevision.deploymentURL%></span>
@@ -167,33 +168,44 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                         <span id="redeploy-in-progress"><span>
                                       </a>
                                     </div>
+                          </div>
+                         </div>
                                 <%
                                 } else if(selectedApplicationRevision.status==APPLICATION_STOPPED){
                                 %>
                                     <div class="btn-group ctrl-edit-button btn-edit-code">
                                       <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue" onclick="startApplication();">Start</a>
                                     </div>
+                          </div>
+                         </div>
                                 <%
                                 } else if(selectedApplicationRevision.status==APPLICATION_INACTIVE){
                                 %>
                                     <div class="btn-group ctrl-edit-button btn-edit-code">
                                       <a type="button" class="btn cu-btn cu-btn-md cu-btn-blue" onclick="startApplication();">Start</a>
                                     </div>
-                                    <div class="btn-group ctrl-edit-button btn-edit-code">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-gray" onclick="requestToExtend();">Request to keep <%=cloudSpecificApplicationRepresentation.toLowerCase()%> running continuously</a>
-                                    </div>
+                          </div>
+                         </div>
+                         <div class="btn-group row requestbox ctrl-edit-button btn-edit-code fullwidth">
+                            <a type="button" class="btn cu-btn cu-btn-md cu-btn-orange novertical-padding fullwidth" onclick="requestToExtend();">
+                                <span class="fw-stack fw-lg btn-action-ico">
+                                    <i class="fw fw-mail fw-stack-1x"></i>
+                                </span> Request to keep <%=cloudSpecificApplicationRepresentation.toLowerCase()%> running continuously
+                            </a>
+                         </div>
                                 <%
                                 } else {
                                 %>
                                     <div class="btn-group ctrl-edit-button btn-edit-code">
                                       <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" href="#yourlink">Error has occurred.</a>
                                     </div>
+                          </div>
+                         </div>
                                 <%
                                 }
                                %>
-                          </div>
                       </div>
-                      <div class="col-xs-12 col-md-12 col-lg-4">
+                      <div class="col-xs-12 col-md-12 col-lg-5 overview-version-btn">
                           <a id="delete-version" onclick="deleteApplicationPopUp();">
                               <div class="btn-create-version">
                                   <span class="fw-stack fw-lg btn-action-ico">
@@ -271,26 +283,26 @@ jagg.template("home", function(inputs, outputs, jagg) {
               <div class="block-team pull-left">
                 <a class="block-anch" id="envVars" href="/appmgt/site/pages/envs.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
                   <h3>Environment Variables</h3>
-                  <div class="block-icon pull-left">
+                  <div class="block-icon pull-left col-xs-12 col-md-3 col-lg-3">
                     <i class="fw fw-gadget fw-5x"></i>
                   </div>
-                  <div class="block-number pull-right">
+                  <div class="block-number pull-right col-xs-12 col-md-4 col-lg-4">
                    <span id="runtimePropCount"><%=selectedApplicationRevision.runtimeProperties.length.toString()%></span>
                   </div>
-                  <div class="env-list ellipsis" id="env-list"></div>
+                  <div class="list-box ellipsis col-xs-12 col-md-5 col-lg-5" id="env-list"></div>
                   <div class="clearfix"></div>
                 </a>
               </div>
               <div class="block-database pull-left">
                 <a class="block-anch" id="tagSet" href="/appmgt/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=selectedApplicationRevision.hashId%>">
                   <h3>Tags</h3>
-                  <div class="block-icon pull-left">
+                  <div class="block-icon pull-left col-xs-12 col-md-3 col-lg-3">
                     <i class="fw fw-tag fw-5x"></i>
                   </div>
-                  <div class="block-number pull-right">
+                  <div class="block-number pull-right col-xs-12 col-md-4 col-lg-4">
                    <span id="tagCount"><%=selectedApplicationRevision.tags.length.toString()%></span>
                   </div>
-                  <div class="tag-list ellipsis" id="tag-list"></div>
+                  <div class="list-box ellipsis col-xs-12 col-md-5 col-lg-5" id="tag-list"></div>
                   <div class="clearfix"></div>
                 </a>
               </div>
@@ -301,7 +313,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                    <h4 class="pull-right"><span id="memory"><%=selectedApplicationRevision.conSpecMemory%></span>MB RAM and <span id="cpu"><%=selectedApplicationRevision.conSpecCpu/1000%></span> vCPU</h4>
                    <h4></h4>
                   </div>
-                  <div class="tag-list ellipsis" id="tag-list"></div>
+                  <div class="list-box ellipsis" id="con-spec"></div>
                   <div class="clearfix"></div>
               </div>
 
@@ -316,12 +328,10 @@ jagg.template("home", function(inputs, outputs, jagg) {
         <div class="modal-dialog modal-dialog-margin-top-md ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <div class="col-md-7">
-                        <h3 class="modal-title" id="modal-title"></h3>
-                    </div>
-                    <div class="col-md-5" id="modal-header-spinner">
-                        <i class="fw fw-2x fw-loader2 fw-spin"></i>
-                    </div>
+                    <h3 class="modal-title" id="modal-title"></h3>
+                    <span class="app-creation-loader" id="app-creation-header-loader">
+                        <i class="fw fw-loader2 fw-spin fw-2x pull-right"></i>
+                    </span>
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
@@ -338,7 +348,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
   // stop application
     function redeployApplication(){
         $("#redeploy-in-progress").html("<i class=\"fw fw-loader2 fw-spin\"></i>");
-        executeAsync(drawProgressWindow("Initializing Redeployment"));
+        executeAsync(drawProgressWindow("Redeploying the " + cloudSpecificApplicationRepresentation.toLowerCase() + "..."));
         jagg.post("../blocks/application/application.jag", {
             action: "redeployApplication",
             applicationName: applicationName,
@@ -382,7 +392,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
             setTimeout(reloadAppHome, 2000);
             jagg.message({
                 content: cloudSpecificApplicationRepresentation + " was successfully stopped.",
-                type: 'info',
+                type: 'success',
                 timeout: '5000'
             });
         }, function(jqXHR, data, errorThrown) {
@@ -409,7 +419,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
                 '<h3>You cannot have more than ' + maxApplications + " running " + cloudSpecificApplicationRepresentation.toLowerCase() + ' versions on a free subscription. ' +
                 'Please stop an existing ' + cloudSpecificApplicationRepresentation.toLowerCase() + ' version to continue.</h3></div></div></div></div>');
         } else {
-            executeAsync(drawProgressWindow("Initializing Deployment"));
+            executeAsync(drawProgressWindow("Starting the " + cloudSpecificApplicationRepresentation.toLowerCase() + "..."));
             jagg.post("../blocks/application/application.jag", {
                 action: "startApplication",
                 applicationName: applicationName,
@@ -444,77 +454,72 @@ jagg.template("home", function(inputs, outputs, jagg) {
             var result = jQuery.parseJSON(result);
             if (result.length > 0) {
                 $("#progress_table").html("");
-                $("#modal-header-spinner").html("");
-                $("#modal-title").text("Progress...");
+                $("#app-creation-header-loader").html("");
+                var table = "<table class='table' style='width:100%; color:black'>" ;
+                for(var i = 0; i < result.length; i++){
+                    var statusStyle;
+                    var event = result[i];
 
-            }
-            var table = "<table class='table' style='width:100%; color:black'>" ;
-            for(var i = 0; i < result.length; i++){
-                var statusStyle;
-                var event = result[i];
-
-                if(event.status == "success"){
-                    statusStyle = "success";
-                    if (event.name === "Status") {
+                    if(event.status == "success"){
+                        statusStyle = "success";
+                        if (event.name === "Status") {
                             table = table + "<tr class='" + statusStyle + "'><td>Container status</td>" +
-                                            "<td>"+event.description+"</td>" +
+                                            "<td>" + event.description + "</td>" +
                                             "<td><i class=\"fw fw-check\"></i></td></tr>";
-                    } else {
+                        } else {
                             table = table + "<tr class='" + statusStyle + "'><td>" + event.name + "</td>" +
                                             "<td></td>" +
                                             "<td><i class=\"fw fw-check\"></i></td></tr>";
-                    }
-                } else if (event.status == "failed") {
-                    statusStyle = "danger";
-                    if (event.name === "Status") {
+                        }
+                    } else if (event.status == "failed") {
+                        statusStyle = "danger";
+                        if (event.name === "Status") {
                             table = table + "<tr class='" + statusStyle + "'><td>Container status</td>" +
-                                            "<td>"+event.description+"</td>" +
+                                            "<td>" + event.description + "</td>" +
                                             "<td><i class=\"fw fw-error\"></i></td></tr>";
-                    } else {
+                        } else {
                             table = table + "<tr class='" + statusStyle + "'><td>" + event.name + "</td>" +
                                             "<td></td>" +
                                             "<td><i class=\"fw fw-error\"></i></td></tr>";
-                    }
-                } else if (event.status == "pending"){
-                    if (event.name === "Status") {
-                        statusStyle = "active";
+                        }
+                    } else if (event.status == "pending"){
+                        if (event.name === "Status") {
+                            statusStyle = "active";
                             table = table + "<tr class='" + statusStyle + "'><td>Container status</td>" +
-                                            "<td>"+event.description+"</td>" +
+                                            "<td>" + event.description + "</td>" +
                                             "<td><i class=\"fw fw-loader2 fw-spin\"></i></td></tr>";
-                    } else {
-                        statusStyle = "active";
+                        } else {
+                            statusStyle = "active";
                             table = table + "<tr class='" + statusStyle + "'><td>" + event.name + "</td>" +
                                             "<td></td>" +
                                             "<td><i class=\"fw fw-loader2 fw-spin\"></i></td></tr>";
+                        }
                     }
                 }
-            }
-
-            table = table + "</table>";
-            if (result.length > 0) {
+                table = table + "</table>";
                 $("#progress_table").html(table);
-            }
-            for(var i = 0; i < result.length; i++){
-                var statusStyle;
-                var event = result[i];
-                if (event.name === "Status" && event.status === "success") {
-                    setTimeout(redirectAppHome, 4250);
-                    function redirectAppHome(){
-                        deleteAppCreationEvents();
-                        window.location.replace("home.jag?applicationKey=<%=applicationKey%>");
-                    }
-                } else if(event.status == "failed") {
-                    //When redeploying an application the associated pod is deleted and an event with the name
-                    //"Stopping Containers" is persisted in the database. Due to the pod not getting deleted within the
-                    //specified time period the "Stopping Containers" event gets a status of "failed". Since only
-                    //application deletion is involved with the "Stopping Containers" event if the event name is
-                    //"Stopping Containers" the following message is not displayed
-                    if (event.name !== "Stopping Containers") {
-                        jagg.message({content: "Error occurred while creating " + cloudSpecificApplicationRepresentation.toLowerCase() + ".", type: 'error'});
-                    }
-                    setTimeout(redirectAppListing, 5000);
-                    function redirectAppListing(){
-                        window.location.replace("index.jag");
+                for(var i = 0; i < result.length; i++){
+                    var statusStyle;
+                    var event = result[i];
+                    if (event.name === "Status" && event.status === "success") {
+                        setTimeout(redirectAppHome, 4250);
+                        function redirectAppHome(){
+                            deleteAppCreationEvents();
+                            window.location.replace("home.jag?applicationKey=<%=applicationKey%>");
+                        }
+                    } else if(event.status == "failed") {
+                        //When redeploying an application the associated pod is deleted and an event with the name
+                        //"Stopping Containers" is persisted in the database. Due to the pod not getting deleted within the
+                        //specified time period the "Stopping Containers" event gets a status of "failed". Since only
+                        //application deletion is involved with the "Stopping Containers" event if the event name is
+                        //"Stopping Containers" the following message is not displayed
+                        if (event.name !== "Stopping Containers") {
+                            jagg.message({content: "Error occurred while creating " + cloudSpecificApplicationRepresentation.toLowerCase() + ".", type: 'error'});
+                        }
+                        setTimeout(redirectAppListing, 5000);
+                        function redirectAppListing(){
+                            window.location.replace("index.jag");
+                        }
                     }
                 }
             }
