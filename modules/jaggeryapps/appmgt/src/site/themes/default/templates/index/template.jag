@@ -276,12 +276,14 @@ jagg.template("index", function(inputs, outputs, jagg) {
                 <i class="fw fw-add fw-stack-1x"></i>
             </span> <span class="hidden-xs">Create <%=cloudSpecificApplicationRepresentation%></span>
         </a>
+    <% if (jagg.getSelectedCloud() != INTEGRATION_CLOUD) { %>
         <a href="<%=jagg.getAbsoluteUrl("/site/pages/newdatabase.jag")%>?isEdit=false" class="btn-action" data-toggle="tooltip" data-placement="top" title="Create Database">
             <span class="fw-stack fw-lg btn-action-ico">
                 <i class="fw fw-circle-outline fw-stack-2x"></i>
                 <i class="fw fw-add fw-stack-1x"></i>
             </span> <span class="hidden-xs">Create Database</span>
         </a>
+    <% } %>
     </div>
     <div class="container-fluid">
 

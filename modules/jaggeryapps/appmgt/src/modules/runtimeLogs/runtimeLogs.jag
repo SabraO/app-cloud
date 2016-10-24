@@ -27,18 +27,21 @@ var KubernetesRuntime = Packages.org.wso2.appcloud.provisioning.runtime.Kubernet
 var KubernetesProvisioningUtils = Packages.org.wso2.appcloud.provisioning.runtime.Utils.KubernetesProvisioningUtils;
 var DeploymentLogs = Packages.org.wso2.appcloud.provisioning.runtime.beans.DeploymentLogs;
 var DeploymentLogStream = Packages.org.wso2.appcloud.provisioning.runtime.beans.DeploymentLogStream;
+var applicationModule = jagg.module("application");
 
 var getRuntimeLogs = function (applicationKey, selectedRevision, applicationType, isStream) {
 
     var deploymentLog;
     var applicationName = ApplicationManager.getApplicationNameByHashId(applicationKey);
     var versionHashId = Util.getVersionHashId(applicationName, selectedRevision, modManager.getTenantId());
+    var exposureLevel = applicationModule.getExposureLevel(applicationName, selectedRevision);
 
     try {
         var applicationCtx = KubernetesProvisioningUtils.getApplicationContext(applicationName, selectedRevision,
                                                                                applicationType,
                                                                                modManager.getTenantId(),
-                                                                               modManager.getTenantDomain(), versionHashId);
+                                                                               modManager.getTenantDomain(),
+                                                                               versionHashId, exposureLevel);
         var kubService = new KubernetesRuntime(applicationCtx);
         if (isStream){
             return kubService.streamRuntimeLogs();

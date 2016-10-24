@@ -45,14 +45,14 @@ var Util = Packages.org.wso2.appcloud.core.Util;
 var addApplicationViaGitHub = function (applicationName, versionName, applicationDescription, replicas,
                                         runtimeId, appTypeName, runtimePropertiesArray, tagArray, appIcon, gitHubRepoUrl,
                                         gitHubRepoBranch, projectRoot, token, isNewVersion, conSpecMemory, conSpecCpu,
-                                        appCreationMethod, applicationContext, setDefaultVersion) {
+                                        appCreationMethod, applicationContext, setDefaultVersion, exposureLevel) {
 
     log.info("Started creating App => Name:" + applicationName + " Version:" + versionName + " Description:" + applicationDescription +
     " RuntimeId:" + runtimeId + " AppType:" + appTypeName + " Runtime Properties:" + JSON.stringify(runtimePropertiesArray) +
     " Tags:" + JSON.stringify(tagArray) + " GitHub RepoUrl:" + gitHubRepoUrl + " GitHub Repo Branch:" + gitHubRepoBranch +
     " Project Root:" + projectRoot + " Token:" + token + " New Version:" + isNewVersion + " Allocated Memory:" + conSpecMemory +
     " Allocated CPU:" + conSpecCpu + " App Creation Method:" + appCreationMethod + " Context:" + applicationContext +
-    " DefaultVersion:" + setDefaultVersion);
+    " DefaultVersion:" + setDefaultVersion + " exposureLevel:" + exposureLevel);
 
     var tenantId = modManager.getTenantId();
     var applicationHashId = Util.getApplicationHashId(applicationName, tenantId);
@@ -61,11 +61,11 @@ var addApplicationViaGitHub = function (applicationName, versionName, applicatio
 
     if(isNewVersion == 'true'){
         version = appManager.createAppVersionInDataBase(versionName, runtimeId, runtimePropertiesArray, tagArray,
-                                                        applicationHashId, versionHashId, conSpecMemory, conSpecCpu);
+                                                        applicationHashId, versionHashId, conSpecMemory, conSpecCpu, exposureLevel);
     }else{
         var application = appManager.createAppInDataBase(applicationName, versionName, applicationDescription, replicas,
                                                          runtimeId, appTypeName, runtimePropertiesArray, tagArray, appIcon,
-                                                         applicationHashId, versionHashId, conSpecMemory, conSpecCpu);
+                                                         applicationHashId, versionHashId, conSpecMemory, conSpecCpu, exposureLevel);
         version = application.getVersions().get(0);
     }
 
@@ -85,9 +85,10 @@ var addApplicationViaGitHub = function (applicationName, versionName, applicatio
     var buildDockerImageStatus = appManager.buildDockerImage(applicationName, versionName, runtimeId, absFileUploadedPath, applicationRuntime, tagName,
                                 versionHashId, dockerClient);
     if (buildDockerImageStatus) {
-        appManager.pushDockerImage(applicationName, versionName, applicationRuntime, tagName, versionHashId, dockerClient);
-        appManager.triggerKubernetesDeployment(runtimeProperties, applicationRuntime, tagName, applicationName, versionName,
-                appTypeName, runtimeId, replicas, versionHashId, conSpecMemory, conSpecCpu);
+        var imageName = modManager.getPropertyValue(PROPERTY_DOCKER_REGISTRY_URL) + "/" + applicationRuntime.getImageName();
+        appManager.pushDockerImage(applicationName, versionName, imageName, tagName, versionHashId, dockerClient);
+        appManager.triggerKubernetesDeployment(imageName, runtimeProperties, applicationRuntime, tagName, applicationName, versionName,
+                appTypeName, runtimeId, replicas, versionHashId, conSpecMemory, conSpecCpu, exposureLevel);
     }
 
     if (isNewVersion == 'true') {
@@ -107,7 +108,7 @@ var createDockerFileForGitHub =  function(applicationName, versionName, runtimeI
     var msg = "Docker file creation successfully triggered in appcloud";
     appManager.addEvent(DOCKER_FILE_CREATE, EVENT_PENDING, msg, versionHashId);
     if (log.isDebugEnabled()) {
-        log.debug("Start creating docker file for version:" + versionHashId);
+        log.debug("Start creating Docker file for version:" + versionHashId);
     }
     var absFileUploadedPath;
     try {
@@ -127,7 +128,7 @@ var createDockerFileForGitHub =  function(applicationName, versionName, runtimeI
         var appRuntimeProperties = appManager.getRuntimePropertyMap(runtimePropertiesArray);
         dockerClient.createDockerFile(dockerFilePath, runtimeId, dockerTemplateFilePath, appCreationMethod, dockerFilePropertyMap, appRuntimeProperties);
     } catch(e){
-        var msg = "Error while creating docker file";
+        var msg = "Error while creating Docker file";
         appManager.addEvent(DOCKER_FILE_CREATE, EVENT_FAILED, msg, versionHashId);
 
         try {
@@ -140,7 +141,7 @@ var createDockerFileForGitHub =  function(applicationName, versionName, runtimeI
         }
         log.error(msg);
         log.error(e);
-        log.info("Application creation failed because docker file creation failed and roll back process" +
+        log.info("Application creation failed because Docker file creation failed and roll back process" +
                  " is started for application : "+applicationName+" with revision : "+versionName);
         appManager.deleteApplicationUploadedPath(versionHashId);
         appManager.deleteVersionFromDatabase(versionHashId);

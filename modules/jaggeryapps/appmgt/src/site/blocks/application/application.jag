@@ -56,6 +56,7 @@ var log = new Log();
         var applicationDescription = request.getParameter("applicationDescription");
         var replicas = 1;
         var runtimeId = request.getParameter("runtime");
+        var exposureLevel = "public";
         if (validateRequiredAndNumber("runtime", runtimeId)) {return;}
 
         var isNewVersion = request.getParameter("isNewVersion");
@@ -173,6 +174,34 @@ var log = new Log();
             applicationContext = null;
         }
 
+        var remoteImageUrl = request.getParameter("remoteImageUrl");
+        // validating docker image url pattern, this will not be required when we validate this from the front end.
+        // At the moment custom docker image app creation happens only by using rest API, hence this validation is required.
+        if(remoteImageUrl) {
+            var remoteImageUrlSegments = remoteImageUrl.split(":");
+            if(remoteImageUrlSegments.length < 2) {
+                logMessage = "Bad request : Image url is invalid, it should be image_name:tag";
+                log.warn(logMessage);
+                response.status = 400;
+                response.content = logMessage;
+                return;
+            }
+        }
+
+        // this is temporary code, will be removed when custom docker images feature is fully completed
+        // this is to enforce use only the local registry images to create apps via custom docker images
+        var localRegistry = modManager.getPropertyValue(PROPERTY_DOCKER_REGISTRY_URL);
+        if (remoteImageUrl && remoteImageUrl.indexOf(localRegistry) == -1) {
+            logMessage = "Bad request : Allowed Docker images only from local registry : " + localRegistry;
+            log.warn(logMessage);
+            response.status = 400;
+            response.content = logMessage;
+            return;
+        }
+
+        //var userName = request.getParameter("userName");
+        //var password = request.getParameter("password");
+
         var setDefaultVersion = request.getParameter("setDefaultVersion");
         // checking whether an application with same name and same version, already exists or not
         var versionHashId = applicationModule.getVersionHashId(applicationName, applicationRevision);
@@ -225,7 +254,6 @@ var log = new Log();
                     return;
                 }
             }
-
             if (isAppCountLowerThanMax) {
                 if (isFileAttached == 'true') {
                     var fileSuccessfullyUploaded = applicationModule.
@@ -238,12 +266,13 @@ var log = new Log();
                         return ;
                     }
                 }
-                if (uploadedFileName) {
-                    applicationModule.addApplication(applicationName, applicationRevision, applicationDescription,
-                                                     replicas, runtimeId, appTypeName, runtimeProperties, tags,
-                                                     appIcon, uploadedFileName, isNewVersion, conSpecMemory,
-                                                     conSpecCpu, artifactUrl, appCreationMethod, oldHashId,
-                                                     applicationContext, setDefaultVersion);
+
+                if (uploadedFileName || (remoteImageUrl)) {
+                    applicationModule
+                            .addApplication(applicationName, applicationRevision, applicationDescription, replicas,
+                                            runtimeId, appTypeName, runtimeProperties, tags, appIcon, uploadedFileName,
+                                            isNewVersion, conSpecMemory, conSpecCpu, artifactUrl, appCreationMethod,
+                                            oldHashId, applicationContext, setDefaultVersion, remoteImageUrl, exposureLevel);
                 } else {
                     var gitRepoUrl = request.getParameter("gitRepoUrl");
                     var gitRepoBranch = request.getParameter("gitRepoBranch");
@@ -252,7 +281,7 @@ var log = new Log();
                     gitHubAppModule.addApplicationViaGitHub(applicationName, applicationRevision, applicationDescription,
                             replicas, runtimeId, appTypeName, runtimeProperties, tags,
                             appIcon, gitRepoUrl, gitRepoBranch, projectRoot, token,
-                            isNewVersion, conSpecMemory, conSpecCpu, appCreationMethod, applicationContext, setDefaultVersion);
+                            isNewVersion, conSpecMemory, conSpecCpu, appCreationMethod, applicationContext, setDefaultVersion, exposureLevel);
                 }
                 response.status = 200;
                 response.content = logMessage;
@@ -302,6 +331,7 @@ var log = new Log();
         var applicationType = applicationModule.getApplication(applicationHashId).applicationType;
         var podDeleteTimeOut = modManager.getPropertyValue(POD_DELETE_TIMEOUT);
         var status = applicationModule.getApplicationRevisionStatus(applicationHashId, applicationRevision);
+        var exposureLevel = applicationModule.getExposureLevel(applicationName, applicationRevision);
 
         // redeploy application from kubernetes
         if(applicationName == null){
@@ -316,12 +346,12 @@ var log = new Log();
             versionKey = mod.getVersionHashId(applicationName, applicationRevision)
         }
         if (status == APPLICATION_STOPPED || status == APPLICATION_INACTIVE) {
-            applicationModule.redeployApplication(applicationName, applicationRevision, versionKey, applicationType);
+            applicationModule.redeployApplication(applicationName, applicationRevision, versionKey, applicationType, exposureLevel);
             response.status = 200;
             response.content = "Application is successfully started.";
         } else {
             try {
-                if (applicationModule.redeployVersion(applicationName, applicationRevision, versionKey, applicationType)) {
+                if (applicationModule.redeployVersion(applicationName, applicationRevision, versionKey, applicationType, exposureLevel)) {
                     response.status = 200;
                     response.message = "Application is successfully redeployed.";
                 } else {
@@ -348,9 +378,10 @@ var log = new Log();
             var applicationHashId = applicationModule.getApplicationHashIdByName(applicationName);
             var versions = applicationModule.getVersionListOfApplication(applicationHashId);
             var applicationType = applicationModule.getApplication(applicationHashId).applicationType;
+            var exposureLevel = applicationModule.getExposureLevel(applicationName, applicationRevision);
 
             // redeploy application from kubernetes
-            applicationModule.redeployApplication(applicationName, applicationRevision, versionKey, applicationType);
+            applicationModule.redeployApplication(applicationName, applicationRevision, versionKey, applicationType, exposureLevel);
             print(stringify(versions));
         } else {
             logMessage = "Application creation request not accepted because the application count has " +
@@ -665,6 +696,24 @@ var log = new Log();
         var mod = jagg.module("application");
         var endpoints = mod.getAppTypeUtil(appType).getEndpoints(deploymentURL, versionId);
         print(endpoints);
+
+    } else if (action == "getExposureLevel") {
+
+        var applicationName = request.getParameter("applicationName");
+        var versionName = request.getParameter("versionName");
+        var mod = jagg.module("application");
+        var exposureLevel = mod.getExposureLevel(applicationName, versionName);
+        print(exposureLevel);
+
+    } else if (action == "updateVersionExposureLevel") {
+
+        var exposureLevel = request.getParameter("exposureLevel");
+        var versionName = request.getParameter("versionName");
+        var applicationName = request.getParameter("applicationName");
+        var versionHashId = applicationModule.getVersionHashId(applicationName, versionName);
+        var mod = jagg.module("application");
+        mod.updateVersionExposureLevel(exposureLevel, versionHashId, applicationName, versionName);
+
     } else {
         throw new Error("No action specified for: " + action);
     }

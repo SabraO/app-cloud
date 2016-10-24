@@ -22,6 +22,10 @@
 # This script build initial base docker images to be used in app cloud setup.
 CURRENT_DIR=`pwd`
 
+#java base image
+docker build --no-cache -t wso2-appcloud/alpine-oracle-jdk:1.8.0-base -f $CURRENT_DIR/java/base/1.8.0/Dockerfile.wso2-appcloud-alpine-oracle-jdk-1.8.0.base $CURRENT_DIR/java/base/1.8.0
+docker build --no-cache -t wso2-appcloud/ubuntu-oracle-jdk:1.8.0-base -f $CURRENT_DIR/java/base/1.8.0/Dockerfile.wso2-appcloud-ubuntu-oracle-jdk-1.8.0.base $CURRENT_DIR/java/base/1.8.0
+
 #msf4j base image
 docker build --no-cache -t wso2-appcloud/msf4j:1.0.0-base -f $CURRENT_DIR/msf4j/base/1.0.0/Dockerfile.wso2-appcloud-msf4j-1.0.0.base $CURRENT_DIR/msf4j/base/1.0.0/
 docker build --no-cache -t wso2-appcloud/msf4j:2.0.0-base -f $CURRENT_DIR/msf4j/base/2.0.0/Dockerfile.wso2-appcloud-msf4j-2.0.0.base $CURRENT_DIR/msf4j/base/2.0.0/
@@ -32,16 +36,21 @@ docker build --no-cache -t wso2-appcloud/carbon:4.2.0-base -f $CURRENT_DIR/carbo
 #php base image
 docker build --no-cache -t wso2-appcloud/php:1.0.0-base -f $CURRENT_DIR/php/base/1.0.0/Dockerfile.wso2-appcloud-php-1.0.0.base $CURRENT_DIR/php/base/1.0.0
 
-#tomcat base images
+#wso2as base images
 docker build --no-cache -t wso2-appcloud/wso2as:6.0.0-m1-base -f $CURRENT_DIR/wso2as/base/6.0.0-m1/Dockerfile.wso2-appcloud-wso2as-6.0.0-m1.base $CURRENT_DIR/wso2as/base/6.0.0-m1
 docker build --no-cache -t wso2-appcloud/wso2as:6.0.0-m2-base -f $CURRENT_DIR/wso2as/base/6.0.0-m2/Dockerfile.wso2-appcloud-wso2as-6.0.0-m2.base $CURRENT_DIR/wso2as/base/6.0.0-m2
 docker build --no-cache -t wso2-appcloud/wso2as:6.0.0-m3-base -f $CURRENT_DIR/wso2as/base/6.0.0-m3/Dockerfile.wso2-appcloud-wso2as-6.0.0-m3.base $CURRENT_DIR/wso2as/base/6.0.0-m3
+
+#tomcat base images
+docker build --no-cache -t wso2-appcloud/tomcat:8.5.5-base -f $CURRENT_DIR/tomcat/base/8.5.5/Dockerfile.wso2-appcloud-tomcat-8.5.5.base $CURRENT_DIR/tomcat/base/8.5.5
+docker build --no-cache -t wso2-appcloud/tomcat:8.5.5-ubuntu-base -f $CURRENT_DIR/tomcat/base/8.5.5/Dockerfile.wso2-appcloud-tomcat-8.5.5-ubuntu.base $CURRENT_DIR/tomcat/base/8.5.5-ubuntu
 
 #jaggery base image
 docker build --no-cache -t wso2-appcloud/jaggery:0.11.0-base -f $CURRENT_DIR/jaggery/base/0.11.0/Dockerfile.wso2-appcloud-jaggery-0.11.0.base $CURRENT_DIR/jaggery/base/0.11.0
 
 #wso2dataservice base image
 docker build --no-cache -t wso2-appcloud/wso2dataservice:3.5.0-base -f $CURRENT_DIR/wso2dataservice/base/3.5.0/Dockerfile.wso2-appcloud-wso2dataservice-3.5.0.base $CURRENT_DIR/wso2dataservice/base/3.5.0
+docker build --no-cache -t wso2-appcloud/wso2dataservice:3.5.1-base -f $CURRENT_DIR/wso2dataservice/base/3.5.1/Dockerfile.wso2-appcloud-wso2dataservice-3.5.1.base $CURRENT_DIR/wso2dataservice/base/3.5.1
 
 #wso2esb base image
 docker build --no-cache -t wso2-appcloud/wso2esb:5.0.0-base -f $CURRENT_DIR/wso2esb/base/5.0.0/Dockerfile.wso2-appcloud-wso2esb-5.0.0.base $CURRENT_DIR/wso2esb/base/5.0.0

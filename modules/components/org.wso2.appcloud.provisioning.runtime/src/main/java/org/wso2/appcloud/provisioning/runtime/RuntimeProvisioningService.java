@@ -200,4 +200,6 @@ public interface RuntimeProvisioningService {
      * @throws RuntimeProvisioningException
      */
     void deleteK8sKindByName(String k8sKind, String name) throws RuntimeProvisioningException;
+
+    void changeExposureLevelInServices(String serviceName, String exposureLevel, String lbHost) throws  RuntimeProvisioningException;
 }

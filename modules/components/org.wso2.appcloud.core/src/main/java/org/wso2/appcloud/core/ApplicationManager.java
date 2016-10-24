@@ -1391,4 +1391,41 @@ public class ApplicationManager {
             DBUtil.closeConnection(dbConnection);
         }
     }
+
+    /**
+     * Method to get the exposure level of a given application version
+     *
+     * @param versionKey version hash id
+     * @return exposure level of the given application version
+     * @throws AppCloudException
+     */
+    public static String getExposureLevel(String versionKey) throws AppCloudException {
+        Connection dbConnection = DBUtil.getDBConnection();
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+        try {
+            return ApplicationDAO.getInstance().getExposureLevel(dbConnection, versionKey, tenantId);
+        } catch (AppCloudException e) {
+            String msg = "Error while checking for the exposure level for application version: " + versionKey +
+                    " and tenant id: " + tenantId + ".";
+            log.error(msg, e);
+            throw new AppCloudException(msg, e);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
+
+    public static void updateVersionExposureLevel(String exposureLevel, String versionKey) throws  AppCloudException {
+        Connection dbConnection = DBUtil.getDBConnection();
+        int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+        try {
+            ApplicationDAO.getInstance().updateVersionExposureLevel(dbConnection, versionKey, tenantId, exposureLevel);
+        } catch (AppCloudException e) {
+            String msg = "Error while checking for the exposure level for application version: " + versionKey +
+                    " and tenant id: " + tenantId + ".";
+            log.error(msg, e);
+            throw new AppCloudException(msg, e);
+        } finally {
+            DBUtil.closeConnection(dbConnection);
+        }
+    }
 }

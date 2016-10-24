@@ -40,7 +40,7 @@ jagg.template("database/add", function (inputs, outputs, jagg) { %>
 <form name="addDatabaseForm" id="addDatabaseForm" enctype="multipart/form-data" method='post' action='#'>
             <div class="col-md-5 col-lg-5 forms">
                     <div class="form-group col-md-12 ">
-                        <label for="database-name">Database Name: </label>
+                        <label for="database-name">Database Name:* </label>
                         <input type="text" class="form-control" id="database-name"  name="database-name"  placeholder="Enter database name">
                     </div>
                     <!--<div class="form-group col-md-12">
@@ -59,7 +59,7 @@ jagg.template("database/add", function (inputs, outputs, jagg) { %>
                     <div class="clearfix"></div>
                     
                     <div class="form-group col-md-6">
-                        <label for="user-name-select">Default User Name: </label>
+                        <label for="user-name-select">Default User Name: <I>(max 5 characters)</I></label>
                         <select id="user-name-select" name="user-name-select" class="form-control select2">
                         </select>
                         <!--input type="text" class="form-control" id="user-name-select" name="user-name-select" placeholder="Enter user name"-->

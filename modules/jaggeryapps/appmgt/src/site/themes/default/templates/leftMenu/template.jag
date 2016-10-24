@@ -40,9 +40,6 @@ jagg.template("leftMenu", function (inputs, outputs, jagg) {
  <div class="navbar navbar-secondary">
     <div class="container-fliud">
         <div class="row">
-             <div class="side-pane-trigger">
-                <i class="fa fa-arrow-left"></i>
-            </div>
             <div class="col-md-8 breadcrumb-secondary">
                 <a href="/appmgt/site/pages/index.jag">
                     <i class="<%=cloudIcon%> visible-xs visible-lg"></i>
@@ -57,10 +54,12 @@ jagg.template("leftMenu", function (inputs, outputs, jagg) {
 
 <!-- left pane wrapper -->
 <div class="left-pane ">
-    <ul>
+    <ul >
         <li class="<% if (pageName == "Overview") { %>selected<%}%>">
-                <a id="leftMenuOverview" href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>">
-                <i class="left-menu-icon fw fw-laptop"></i>Overview</a>
+            <ul class="overview-inner-list">
+                <li> <div class="side-pane-trigger float-right"><i class="fw fw-left"></i></div></li>
+                <li> <a id="leftMenuOverview" href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>"><i class="left-menu-icon fw fw-laptop"></i>Overview</a></li>
+            </ul>
         </li>
         <li class="<% if (pageName == "Environment Variables") { %>selected<%}%>">
                 <a id="leftMenuEnvVars" href="/appmgt/site/pages/envs.jag?versionKey=<%=versionKey%>&applicationKey=<%=applicationKey%>">
@@ -70,9 +69,9 @@ jagg.template("leftMenu", function (inputs, outputs, jagg) {
                 <a id="leftMenuTagSet" href="/appmgt/site/pages/tags.jag?applicationKey=<%=applicationKey%>&versionKey=<%=versionKey%>">
                 <i class="left-menu-icon fw fw-tag"></i>Tags</a>
         </li>
-        <li class="<% if (pageName == "Runtime Logs") { %>selected<%}%>">
+        <li class="<% if (pageName == "Logs") { %>selected<%}%>">
                 <a href="/appmgt/site/pages/runtimeLogs.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>&versionKey=<%=versionKey%>">
-                <i class="left-menu-icon fw fw-hdd"></i>Runtime Logs</a>
+                <i class="left-menu-icon fw fw-hdd"></i>Logs</a>
         </li>
         <li class="<% if (pageName == "Custom URL") { %>selected<%}%>">
                 <a href="/appmgt/site/pages/customurl.jag?applicationKey=<%=applicationKey%>&selectedRevision=<%=selectedRevision%>">
@@ -85,24 +84,6 @@ jagg.template("leftMenu", function (inputs, outputs, jagg) {
 
     </ul>
  </div>
-
-
-<script>
-$('.side-pane-trigger').click(function(){
-        var rightPane = $('.right-pane');
-        var leftPane = $('.left-pane');
-        if (rightPane.hasClass('visible')){
-            rightPane.animate({"left":"0%", "width":"100%"}, "slow").removeClass('visible');
-            leftPane.animate({"left":"-15%"}, "slow");
-            $(this).find('i').removeClass('fa-arrow-left').addClass('fa-reorder');
-        } else {
-            rightPane.animate({"left":"15%", "width":"85%"}, "slow").addClass('visible');
-            leftPane.animate({"left":"0%"}, "slow");
-            $(this).find('i').removeClass('fa-reorder').addClass('fa-arrow-left');
-        }
-    });
-
-</script>
 
 <%
 }); %>

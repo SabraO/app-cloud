@@ -38,20 +38,41 @@ jagg.template("page/master", function(inputs, outputs, jagg) {
     <link rel="shortcut icon" href="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('assets/img/favicon.ico'))%>" type="image/x-icon"/>
 </head>
 
-<body>
 <!--To enable notification banner, uncomment following HTML code snippet-->
-<body class="top-notification-active">
-    <div class="top-notification">
-        <span class="hidden-xs">We are upgrading <%=pageTitle%></span>
-    </div>
+<body>
+    <body class="top-notification-active">
+        <div class="top-notification">
+            <span class="hidden-xs">We are upgrading <%=pageTitle%></span>
+        </div>
+    </body>
     <div id="wrap">
         <div id="header"><% jagg.includeBlocks(outputs.header); %></div>
         <div id="body"><% jagg.includeBlocks(outputs.body); %></div>
         <div id="footer" class="footer-main"><% jagg.includeBlocks(outputs.footer); %></div>
     </div>
-
 </body>
 
+<script>
+    var rightPane = $('.right-pane');
+    var leftPane = $('.left-pane');
+
+    $('.side-pane-trigger').click(function(){
+        if (rightPane.hasClass('visible')){
+            rightPane.animate({"left":"0%", "width":"100%"}, "slow").removeClass('visible');
+            leftPane.animate({"left":"-15%"}, "slow");
+            $('#reorder-icon-div').html('<div class="side-pane-trigger"><i class="fa fa-reorder"></i></div>');
+        } else {
+            rightPane.animate({"left":"15%", "width":"85%"}, "slow").addClass('visible');
+            leftPane.animate({"left":"0%"}, "slow");
+            $('#reorder-icon-div').html('');
+        }
+    });
+    $('#reorder-icon-div').click(function(){
+        rightPane.animate({"left":"15%", "width":"85%"}, "slow").addClass('visible');
+        leftPane.animate({"left":"0%"}, "slow");
+        $('#reorder-icon-div').html('');
+    });
+</script>
 </html>
 
 <% }); %>

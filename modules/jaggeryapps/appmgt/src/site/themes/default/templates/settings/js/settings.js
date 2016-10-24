@@ -20,6 +20,7 @@
 
 // page initialization
 $(document).ready(function () {
+    getExposureLevel();
 });
 
 $("#update-default-version").click(function () {
@@ -44,3 +45,38 @@ $("#update-default-version").click(function () {
     });
 });
 
+
+$("#update-exposure-level").click(function () {
+    var versionName = $("#exposure-level-version-list option:selected").val();
+
+    jagg.post("../blocks/application/application.jag", {
+        action: "updateVersionExposureLevel",
+        applicationName: applicationName,
+        versionName: versionName,
+        exposureLevel: $("input:radio[name='security-radio']:checked").val()
+    },function exposureLevelUpdatedSuccess(result) {
+        jagg.message({content: "Exposure level is successfully updated.", type: 'success', id: 'view_log'});
+
+    },function (jqXHR, textStatus, errorThrown) {
+        jagg.message({content: jqXHR.responseText, type: 'error', id: 'view_log'});
+
+    });
+});
+
+$("#exposure-level-version-list").change(function () {
+    getExposureLevel();
+});
+
+function getExposureLevel() {
+    var versionName = $("#exposure-level-version-list option:selected").val();
+    jagg.post("../blocks/application/application.jag", {
+        action:"getExposureLevel",
+        versionName:versionName,
+        applicationName:applicationName
+    },function (result) {
+        $("#security-" + result).prop("checked", true);
+    },function (jqXHR, textStatus, errorThrown) {
+        jagg.message({content: "Error occurred while retrieving the endpoint security level of the selected "
+                    + cloudSpecificApplicationRepresentation.toLowerCase() + " version", type: 'error', id:'view_log'});
+    });
+}

@@ -36,6 +36,8 @@ jagg.template("settings", function (inputs, outputs, jagg) { %>
         }
     }
     var cloudSpecificApplicationRepresentation = outputs.cloudSpecificApplicationRepresentation;
+    var privateURL = outputs.privateURL;
+    var publicURL = outputs.publicURL;
 %>
 
 <!-- start of setting global javascript variable values from jaggery side -->
@@ -47,6 +49,9 @@ jagg.template("settings", function (inputs, outputs, jagg) { %>
 <!-- BOF App factory menu actionbar -->
 <input type="hidden" maxlength="19" id="defaultDomain" name="defaultDomain" value=""/>
 <div class="action-bar">
+    <div id="reorder-icon-div">
+
+    </div>
 	<a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to <%=cloudSpecificApplicationRepresentation%>">
          <span class="fw-stack fw-lg btn-action-ico">
              <i class="fw fw-circle-outline fw-stack-2x"></i>
@@ -67,13 +72,13 @@ jagg.template("settings", function (inputs, outputs, jagg) { %>
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs" role="tablist">
                         <li role="presentation" class="active"><a href="#default-version" aria-controls="default-version" role="tab" data-toggle="tab">Default Version</a></li>
+                        <li role="presentation"><a href="#exposure-level" aria-controls="exposure-level" role="tab" data-toggle="tab">Exposure Level</a></li>
                     </ul>
 
                     <!-- Tab panes -->
                     <div class="tab-content">
 
                         <div role="tabpanel" class="tab-pane active" id="default-version">
-                            <div id="push"></div>
                             <div class="from-group-margin">
                                 <label for="default-version" id="lbl-default-version">Current Default Version: <%=defaultVersion%></label>
                             </div>
@@ -87,7 +92,7 @@ jagg.template("settings", function (inputs, outputs, jagg) { %>
                             <div class="form-group">
                                 <label for="production-custom">New Default Version: </label>
                                  <select id="default-version" name="default-version" class="form-control"
-                                 placeholder="Select a state" allowClear="true">
+                                 placeholder="Select a version" allowClear="true">
                                     <%=versionString%>
                                  </select>
                             </div>
@@ -101,8 +106,47 @@ jagg.template("settings", function (inputs, outputs, jagg) { %>
                                 </button>
                             </div>
                         </div>
-                    </div>
 
+                        <div role="tabpanel" class="tab-pane" id="exposure-level">
+                            <div class="from-group-margin">
+
+                            </div>
+                            <div class="from-group-margin">
+                            <div class="form-group">
+                                <label for="production-custom">Available Versions: </label>
+                                 <select id="exposure-level-version-list" name="exposure-level" class="form-control"
+                                 placeholder="Select a version" allowClear="true">
+                                    <%=versionString%>
+                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <div class="radio">
+                                  <label>
+                                      <input type="radio" name="security-radio" id="security-public" class="custom-radio" value="public" checked="checked"/>Public
+                                      <p class="help-block">Endpoints will be visible to all external traffic (Internet) via <b>&lt;application_name&gt;.<%=publicURL%></b> url. These public endpoints can be accessed internally (traffic from WSO2 Cloud) via <b>&lt;application_name&gt;.<%=privateURL%></b> url as well.</p>
+                                  </label>
+                                </div>
+                                <div class="radio">
+                                  <label>
+                                      <input type="radio" name="security-radio" id="security-private" class="custom-radio" value="private"/>Private</span>
+                                          <p class="help-block">Endpoints will be visible only to the internal traffic (traffic from WSO2 Cloud). These private endpoints can be accessed only via <b>&lt;application_name&gt;.<%=privateURL%></b> url.</p>
+                                      </label>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="button" class="cu-btn cu-btn-sm cu-btn-blue" id="update-exposure-level">
+                                <span class="fw-stack fw-lg btn-action-ico">
+                                    <i class="fw fw-circle-outline fw-stack-2x"></i>
+                                    <i class="fw fw-add fw-stack-1x"></i>
+                                </span>
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
             </div>
         </div>
 </div><!-- /.container -->

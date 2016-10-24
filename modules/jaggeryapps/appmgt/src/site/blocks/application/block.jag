@@ -50,11 +50,11 @@ jagg.block("application", {
         var cloudSpecificApplicationRepresentation = modManager.getCloudTypeProperties().cloudSpecificApplicationRepresentation;
         var applications = applicationModule.getAllApplications();
 
-        var requestNewAppTypeSubjectMessage = 'Requesting a new runtime for ' + cloudSpecificApplicationRepresentation + ' type: ' + inputs.appTypeName;
+        var requestNewAppTypeSubjectMessage = 'Requesting a new runtime for ' + cloudSpecificApplicationRepresentation.toLowerCase() + ' type: ' + inputs.appTypeName;
         var requestNewAppTypeURL = modManager.getPropertyValue(modManager.getCloudTypeProperties().properties.supportUrl) +
                 '&subject=' + requestNewAppTypeSubjectMessage;
 
-        var requestMoreAppsSubjectMessage = 'Requesting to run more than ' + maxAppCount + ' ' + cloudSpecificApplicationRepresentation + 's';
+        var requestMoreAppsSubjectMessage = 'Requesting to run more than ' + maxAppCount + ' ' + cloudSpecificApplicationRepresentation.toLowerCase() + 's';
         var requestMoreAppseURL = modManager.getPropertyValue(modManager.getCloudTypeProperties().properties.supportUrl) +
                 '&subject=' + requestMoreAppsSubjectMessage;
         var allDBInfo = databaseModule.getAllDatabasesInfo();

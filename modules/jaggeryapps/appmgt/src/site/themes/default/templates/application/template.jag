@@ -81,6 +81,10 @@ jagg.template("application", function (inputs, outputs, jagg) {
     var envVariableErrorMsg = "";
     var uploadURLErrorMsg = "";
     var uploadMethod = "file";
+    var custom = "<%=CUSTOM%>";
+    if(appTypeName == custom){
+        uploadMethod = "";
+    }
     var urlUploadComplete = false;
     var applicationHashId;
     var notAllowedEnvVariables = jQuery.parseJSON('<%=notAllowedEnvVariables%>');
@@ -251,6 +255,12 @@ jagg.template("application", function (inputs, outputs, jagg) {
                     var optionSpec = $("#container option:selected").index();
                     formData.append('conSpec', conSpecs[optionSpec]);
                     formData.append('runtime', optionRuntime);
+                    if(appTypeName === custom) {
+                        formData.append('remoteImageUrl', $("#remoteImageUrl").val());
+                       // formData.append('userName', $("#userName").val());
+                       // formData.append('password', $("#password").val());
+                        formData.append('appCreationMethod', custom);
+                    }
                     if(uploadMethod === "file"){
                         formData.append('uploadedFileName', $("#uploadedFileName").val());
                         formData.append('appCreationMethod', 'default');
@@ -276,7 +286,14 @@ jagg.template("application", function (inputs, outputs, jagg) {
                             tags.push(property);
                         }
                     }
-                    formData.append('tags', JSON.stringify(tags));
+                    if (appTypeName === custom) {
+                        var tagArray = new Array();
+                        var tagObj = { "key":"Base Image", "value":$("#remoteImageUrl").val() };
+                        tagArray.push(tagObj);
+                        formData.append('tags',JSON.stringify(tagArray));
+                    } else {
+                        formData.append('tags', JSON.stringify(tags));
+                    }
                     var checkedDefaultVersion = $("#default_version").is(":checked");
                     formData.append('setDefaultVersion', checkedDefaultVersion);
                     $.ajax({
@@ -662,7 +679,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
         }
 
         function validateRuntimeSelection(value){
-            return (value > 0 ) ? true : false;
+            return (value > 0 || value == 'requestNewRuntime') ? true : false;
         }
 
         function validateContent(value, element) {
@@ -693,13 +710,6 @@ jagg.template("application", function (inputs, outputs, jagg) {
             var url = $("#artifactUrl").val();
             var currentExtension = url.split(/[. ]+/).pop();
 
-            if(appTypeName == 'jaggery') {
-                if (currentExtension.toLowerCase() === "zip"){
-                    document.getElementById('runtime').selectedIndex = 1;
-                } else {
-                    document.getElementById('runtime').selectedIndex = 0;
-                }
-            }
         });
 
         /**
@@ -752,6 +762,10 @@ jagg.template("application", function (inputs, outputs, jagg) {
             validateArtifactURL($('#artifactUrl').val());
         });
 
+        $('#remoteImageUrl').on('focusout keyup blur click', function () { // fires on every keyup & blur
+            activateCreateApplication();
+        });
+    
         $("#clearArtifactFile").on('click', function () {
             $('#progress .progress-bar').css('width', '0%');
             $("#fileupload").find(".files").empty();
@@ -775,28 +789,31 @@ jagg.template("application", function (inputs, outputs, jagg) {
     });
 
     function activateCreateApplication() {
-        if ($('#applicationName').val() && $('#applicationRevision').val() && $('#container option:selected').val()
-                        && checkApplicationVersionExistence($('#applicationRevision').val()) && $('#runtime').val() > 0
-                        && ($("#uploadedFileName").val() || $("#artifactUrl").val() || ($("#gitRepoUrl").val()
-                        && $("#gitRepoBranch").val()))) {// checks form for validity
 
-            if($("#uploadedFileName").val() && progress == 100){
-                if(validateArtifactType($("#uploadedFileName").val())){
+        //first disable the button and then enable it only if condions are satisfied
+        $("#add-application").prop("disabled", true);
+
+        if ($('#applicationName').val() && $('#applicationRevision').val() && $('#container option:selected').val() &&
+            $('#runtime').val() > 0 && checkApplicationVersionExistence($('#applicationRevision').val())) {// mandatory validations for all app types
+            if (appTypeName == custom) { // validations for custom app type
+                if ($("#remoteImageUrl").val()) {
                     $("#add-application").prop("disabled", false);
-                }else{
-                    $("#add-application").prop("disabled", true);
                 }
-            }else if ($("#artifactUrl").val()){
-                if(urlUploadComplete){
-                    $("#add-application").prop("disabled", false);
-                } else {
-                    $("#add-application").prop("disabled", true);
+            } else {
+                if ($("#uploadedFileName").val() || $("#artifactUrl").val() || ($("#gitRepoUrl").val()  && $("#gitRepoBranch").val())) { // validations for non custom app types
+                    if ($("#uploadedFileName").val() && progress == 100) {
+                        if (validateArtifactType($("#uploadedFileName").val())) {
+                            $("#add-application").prop("disabled", false);
+                        }
+                    } else if ($("#artifactUrl").val()) {
+                        if (urlUploadComplete) {
+                            $("#add-application").prop("disabled", false);
+                        }
+                    } else if ($("#gitRepoUrl").val() && $("#gitRepoBranch").val()) {
+		                $("#add-application").prop("disabled", false);
+                    }
                 }
-            }else if($("#gitRepoUrl").val()  && $("#gitRepoBranch").val()){
-		        $("#add-application").prop("disabled", false);
             }
-        } else {
-            $("#add-application").prop("disabled", true);      // enables button
         }
     }
 
@@ -908,32 +925,22 @@ jagg.template("application", function (inputs, outputs, jagg) {
 
     function validateArtifactURL(value){
         var pattern = "(ftp|http|https):\/\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\/|\/([\\w#!:.?+=&%@!\\-\\/]))?\." + APP_TYPE_EXTENSION;
-        var pattern_jag_zip = "(ftp|http|https):\/\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\/|\/([\\w#!:.?+=&%@!\\-\\/]))?\.zip";
         var regex = new RegExp(pattern, "g");
-        var regex_jag_zip = new RegExp(pattern_jag_zip, "g");
-        if(appTypeName == 'jaggery') { //Remove this check after removing AS 5.3.0 jaggery runtime
-            if(value && (regex.test(value) || regex_jag_zip.test(value))){
-                if ($('#applicationName').val() && $('#applicationRevision').val()) {
-                    $("#url-upload").attr("disabled", false);
-                }
-                return true;
-            } else {
-                $("#url-upload").attr("disabled", true);
-                uploadURLErrorMsg = "Invalid URL. The URL should be in the format : http:\/\/host-name\/file-location\/file-name." + APP_TYPE_EXTENSION;
-                return false;
+        if(value && regex.test(value)){
+            if ($('#applicationName').val() && $('#applicationRevision').val()) {
+                $("#url-upload").attr("disabled", false);
             }
+            return true;
         } else {
-            if(value && regex.test(value)){
-                if ($('#applicationName').val() && $('#applicationRevision').val()) {
-                    $("#url-upload").attr("disabled", false);
-                }
-                return true;
-            } else {
-                $("#url-upload").attr("disabled", true);
-                uploadURLErrorMsg = "Invalid URL. The URL should be in the format : http:\/\/host-name\/file-location\/file-name." + APP_TYPE_EXTENSION;
-                return false;
-            }
+            $("#url-upload").attr("disabled", true);
+            uploadURLErrorMsg = "Invalid URL. The URL should be in the format : http:\/\/host-name\/file-location\/file-name." + APP_TYPE_EXTENSION;
+            return false;
         }
+    }
+
+//TODO :
+    function validateDockerImageRepositoryURL(value) {
+       // implement the logic to validate docker image repo url
     }
 
     function getUploadURLErrorMsg(){
@@ -981,25 +988,11 @@ jagg.template("application", function (inputs, outputs, jagg) {
     function validateArtifactType(filename) {
         var ext = getFileExtension(filename);
         var isValidExtension = false;
-        if(appTypeName == 'jaggery') { //Remove this check after removing AS 5.3.0 jaggery runtime
-            if((ext.toLowerCase() === APP_TYPE_EXTENSION) || (ext.toLowerCase() === "zip")){
-                if (ext.toLowerCase() === "zip"){
-                    document.getElementById('runtime').selectedIndex = 1;
-                } else {
-                    document.getElementById('runtime').selectedIndex = 0;
-                }
-                isValidExtension = true;
-            } else {
-                artifactErrorMsg= "Invalid artifact selected for " + cloudSpecificApplicationRepresentation + " - Select a valid artifact";
-                isValidExtension = false;
-            }
+        if (ext.toLowerCase() === APP_TYPE_EXTENSION) {
+            isValidExtension = true;
         } else {
-            if(ext.toLowerCase() === APP_TYPE_EXTENSION){
-                isValidExtension = true;
-            } else {
-                artifactErrorMsg= "Invalid artifact selected for " + cloudSpecificApplicationRepresentation + " - Select a valid artifact";
-                isValidExtension = false;
-            }
+            artifactErrorMsg= "Invalid artifact selected for " + cloudSpecificApplicationRepresentation + " - Select a valid artifact";
+            isValidExtension = false;
         }
         return (isValidExtension);
     }
@@ -1130,7 +1123,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
                     <div class="form-group">
                         <div class="checkbox">
                           <label>
-                           <input type="checkbox" name="defaultversion" id="default_version" class="custom-checkbox"/>Make this the default version
+                           <input type="checkbox" name="defaultversion" id="default_version" value="deploy-sample" class="custom-checkbox"/>Make this the default version
                           </label>
                         </div>
                     </div>
@@ -1159,8 +1152,8 @@ jagg.template("application", function (inputs, outputs, jagg) {
             </select>
             </div-->
 
+            <%if(appType.type != CUSTOM) { %>
             <div class="form-group">
-
                 <label class="radio-inline">
                     <input type="radio" name="fileUploadRadioOptions" id="inlineRadio1" value="upload-from-file"
                            checked="checked" class="custom-radio"> Upload from file system
@@ -1186,17 +1179,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
 
             <div class="form-group" id="file-upload-block">
                 <div>
-                    <%
-                        if(appTypeName == 'jaggery') {
-                    %>
-                        <label for="application-description" >Upload a <b>.<%=appType.extension.toUpperCase()%>/.ZIP</b> file: *</label>
-                    <%
-                    } else {
-                    %>
-                        <label for="application-description" >Upload a <b>.<%=appType.extension.toUpperCase()%></b> file: *</label>
-                    <%
-                    }
-                    %>
+                    <label for="application-description" >Upload a <b>.<%=appType.extension.toUpperCase()%></b> file: *</label>
                 </div>
                 <div class="input-group">
                     <input id="uploadedFileName" name="uploadedFileName" type="text" class="form-control" readonly>
@@ -1216,17 +1199,7 @@ jagg.template("application", function (inputs, outputs, jagg) {
 
             <div class="form-group" id="url-upload-block">
                 <div>
-                    <%
-                        if(appTypeName == 'jaggery') {
-                    %>
-                        <label for="application-description" >Upload a <b>.<%=appType.extension.toUpperCase()%>/.ZIP</b> file: *</label>
-                    <%
-                    } else {
-                    %>
-                        <label for="application-description" >Upload a <b>.<%=appType.extension.toUpperCase()%></b> file: *</label>
-                    <%
-                    }
-                    %>
+                    <label for="application-description" >Upload a <b>.<%=appType.extension.toUpperCase()%></b> file: *</label>
                 </div>
                 <div class="input-group">
                     <input id="artifactUrl" name="artifactUrl" type="text" class="form-control" placeholder="Enter artifact URL" />
@@ -1258,22 +1231,30 @@ jagg.template("application", function (inputs, outputs, jagg) {
                     <input id="token" name="token" type="text" class="form-control" placeholder="Enter Personal access token" />
                 </div-->
             </div>
+            <%} else {%>
+             <div class="form-group" id="custom-docker-image-block">
+                <div class="input-group">
+                    <span class="input-group-addon">Image ID</span>
+                    <input id="remoteImageUrl" name="remoteImageUrl" type="text" class="form-control" placeholder="docker.io/testuser/testimage:testtag" />
+                </div>
+                </br>
+               <!-- <div class="input-group">
+                    <span class="input-group-addon">User name</span>
+                    <input id="userName" name="userName" type="text" class="form-control" placeholder="required only if repo is private" />
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon">Password</span>
+                    <input id="password" name="password" type="password" class="form-control" placeholder="required only if repo is private" />
+                </div> -->
+            </div>
 
-            <div class="form-group">
+             <%}%>
+            <div class="form-group <%if(appType.type == CUSTOM) { %>hidden <% } %>">
                 <label for="runtime">Runtime: *
                     <i class="fa fa-question-circle help-tips" data-toggle="tooltip" data-placement="left" title="Select an appropriate runtime to run your <%=cloudSpecificApplicationRepresentation.toLowerCase()%>"></i>
                 </label>
-                <%
-                    if(appTypeName == 'jaggery') {
-                %>
-                    <select name="runtime" id="runtime" class="form-control" disabled></select>
-                <%
-                } else {
-                %>
-                    <select name="runtime" id="runtime" class="form-control"></select>
-                <%
-                }
-                %>
+                <select name="runtime" id="runtime" class="form-control"></select>
             </div>
 
 			<div class="form-group">

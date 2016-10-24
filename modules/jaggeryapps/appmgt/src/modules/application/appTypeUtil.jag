@@ -52,6 +52,7 @@ var MSSAppTypeUtil = function () {};
 var ESBAppTypeUtil = function () {};
 var JaggeryAppTypeUtil = function () {};
 var DSSAppTypeUtil = function () {};
+var CustomAppTypeUtil = function () {};
 
 // extend the AppTypeUtil interface
 WarAppTypeUtil.prototype = Object.create(AppTypeUtil);
@@ -60,6 +61,7 @@ MSSAppTypeUtil.prototype = Object.create(AppTypeUtil);
 ESBAppTypeUtil.prototype = Object.create(AppTypeUtil);
 JaggeryAppTypeUtil.prototype = Object.create(AppTypeUtil);
 DSSAppTypeUtil.prototype = Object.create(AppTypeUtil);
+CustomAppTypeUtil.prototype = Object.create(AppTypeUtil);
 
 // actual implementation goes here
 WarAppTypeUtil.prototype.getEndpoints = function (deploymentUrl, versionId) {
@@ -85,6 +87,8 @@ MSSAppTypeUtil.prototype.getEndpoints = function (deploymentUrl, versionId) {
     }
     return endpoints;
 };
+
+
 
 ESBAppTypeUtil.prototype.getEndpoints = function (deploymentUrl, versionId) {
     var tenantDomain = modManager.getTenantDomain();
@@ -121,18 +125,16 @@ ESBAppTypeUtil.prototype.getEndpoints = function (deploymentUrl, versionId) {
             if (Array.isArray(apis)) {
                 for (var j = 0; j < apis.length; j++) {
                     var api = apis[j];
-                    var url = deploymentUrl + api.context;
-		     var urlWithoutTenant = url.replace(tenantPrefix, "");
                     if (api.name != "ContainerAPI") {
-                        restEndpoints.push({"name" : api.name, "url" : urlWithoutTenant});
+			 var url = deploymentUrl + "/" + api.name + "?swagger.json";
+                        restEndpoints.push({"name" : api.name, "url" : url});
                     }
                 }
             } else {
                 var api = apis;
-                var url = deploymentUrl + api.context;
-		 var urlWithoutTenant = url.replace(tenantPrefix, "");
                 if (api.name != "ContainerAPI") {
-                    restEndpoints.push({"name" : api.name, "url" : urlWithoutTenant});
+		     var url = deploymentUrl + "/" + api.name + "?swagger.json";
+                    restEndpoints.push({"name" : api.name, "url" : url});
                 }
             }
         }

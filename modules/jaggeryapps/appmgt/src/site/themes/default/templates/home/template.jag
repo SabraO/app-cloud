@@ -37,8 +37,6 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var applicationName = application.applicationName;
     var applicationKey = application.hashId;
     var appCreationPageBaseUrl = jagg.getAbsoluteUrl("/site/pages/application.jag");
-    var dashboardBaseUrl = outputs.dashboardUrl;
-    var dashboardUrl = dashboardBaseUrl + applicationName + "-" + selectedRevision;
     var encodedLabels = encodeURIComponent(stringify(selectedApplicationRevision.tags), "UTF-8");
     var encodedEnvs = encodeURIComponent(stringify(selectedApplicationRevision.runtimeProperties), "UTF-8");
     var defaultAppLaunchURL = selectedApplicationRevision.deploymentURL;
@@ -52,6 +50,8 @@ jagg.template("home", function(inputs, outputs, jagg) {
             defaultAppLaunchURL = application.defaultURL;
         }
     }
+    var dashboardProperties = outputs.dashboardProperties;
+    var dataAnalyticsServerUrl = outputs.dataAnalyticsServerUrl;
 %>
 
 <script>
@@ -64,7 +64,6 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var revisions = jQuery.parseJSON('<%=revisions%>');
     var appCreationPageBaseUrl = "<%=appCreationPageBaseUrl%>";
     var selectedApplicationRevision =  jQuery.parseJSON('<%=selectedApplicationRevision%>');
-    var dashboardBaseUrl = "<%=dashboardBaseUrl%>";
     var encodedLabels = "<%=encodedLabels%>";
     var encodedEnvs = "<%=encodedEnvs%>";
     var APPLICATION_STOPPED = "<%=APPLICATION_STOPPED%>";
@@ -77,11 +76,17 @@ jagg.template("home", function(inputs, outputs, jagg) {
     var cloudSpecificApplicationRepresentation = "<%=cloudSpecificApplicationRepresentation%>";
     var versionArray = jQuery.parseJSON('<%=versionArray%>');
     var requestNewAppTypeURL = "<%=outputs.requestNewAppTypeURL%>";
+    var custom = "<%=CUSTOM%>";
+    var dashboardProperties = <%=dashboardProperties%>;
+    var dataAnalyticsServerUrl = "<%=dataAnalyticsServerUrl%>";
 </script>
 
     <div class="right-pane visible">
     <!-- BOF App factory menu actionbar -->
     <div class="action-bar">
+        <div id="reorder-icon-div">
+
+        </div>
         <a href="<%=jagg.getAbsoluteUrl("/site/pages/index.jag")%>" class="btn-action"  title="Back to <%=cloudSpecificApplicationRepresentation%> listing">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>
@@ -159,12 +164,12 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                 if(selectedApplicationRevision.status==APPLICATION_RUNNING){
                                 %>
                                     <div class="btn-group ctrl-edit-button btn-edit-code">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" id="stop-application-btn" onclick="stopApplication();">Stop
+                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-red" id="stop-application-btn" onclick="stopApplicationPopUp();">Stop
                                         <span id="stop-in-progress"><span>
                                       </a>
                                     </div>
                                     <div class="btn-group ctrl-edit-button btn-edit-code">
-                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-gray" onclick="redeployApplication();">Redeploy
+                                      <a type="button" class="btn cu-btn cu-btn-md cu-btn-gray" onclick="redeployApplicationPopUp();">Redeploy
                                         <span id="redeploy-in-progress"><span>
                                       </a>
                                     </div>
@@ -228,7 +233,7 @@ jagg.template("home", function(inputs, outputs, jagg) {
 
                       </div>
 
-                        <div class="col-xs-12 col-md-9 col-lg-9">
+                        <div class="col-xs-12 col-md-9 col-lg-8">
                             <div class="block-replica">
                                 <h3>Replicas</h3>
                                 <div class="block-replicas">
@@ -263,17 +268,8 @@ jagg.template("home", function(inputs, outputs, jagg) {
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-3 col-lg-3" data-toggle="tooltip" title="HTTP Monitoring Dashboard is not supported in this release. It will be available soon!">
-                            <!--<a class="block-anch" href="#" onclick="return false;" target="_blank">-->
-                                <div class="block-monitoring wrapper">
-                                    <div class="ribbon-wrapper"><div class="ribbon">Available Soon</div></div>
-                                    <h3>HTTP Monitoring Dashboard</h3>
-                                    <div class="block-icon pull-left">
-                                        <i class="fw fw-dashboard demo-dashboard-block"></i>
-                                    </div>
-                                <div class="clearfix"></div>
-                                </div>
-                            <!--</a>-->
+                        <div id="dashboards">
+
                         </div>
                       <div class="clearfix"></div>
                     </div>
@@ -427,7 +423,6 @@ jagg.template("home", function(inputs, outputs, jagg) {
                 versionKey: selectedApplicationRevision.hashId,
                 conSpecCpu: conSpecCpu,
                 conSpecMemory: conSpecMemory
-
             }, function(result) {
             });
         }
@@ -542,6 +537,8 @@ jagg.template("home", function(inputs, outputs, jagg) {
 
 </script>
 <script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('templates/home/js/home.js'))%>"></script>
+<script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('templates/home/js/endpoint.js'))%>"></script>
+<script src="<%=jagg.getAbsoluteUrl(jagg.getThemeFile('templates/home/js/dashboard.js'))%>"></script>
 <script src="/appmgt/site/themes/default/js/app-listing-tile-icon.js"></script>
 
 <%

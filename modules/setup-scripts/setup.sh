@@ -48,8 +48,6 @@ fi
 
 # Build source code
 mvn clean install -Dmaven.test.skip=true -f $APP_CLOUD_SRC_HOME/pom.xml
-#Build extensions
-mvn clean install -Dmaven.test.skip=true -f $APP_CLOUD_SRC_HOME/modules/extensions/pom.xml
 
 # Setting up default carbon database
 MYSQL=`which mysql`
@@ -102,14 +100,6 @@ function as_setup(){
     mkdir -p $1/repository/deployment/server/jaggeryapps/appmgt/
     unzip -q $APP_CLOUD_SRC_HOME/modules/jaggeryapps/appmgt/target/appmgt-3.0.0-SNAPSHOT.zip -d $1/repository/deployment/server/jaggeryapps/appmgt/
     sed -e "s@AS_HOME@$1@g" $APP_CLOUD_SRC_HOME/modules/setup-scripts/jaggery/site.json > $1/repository/deployment/server/jaggeryapps/appmgt/site/conf/site.json
-
-    # copy axis2service to dockerfiles/wso2dataservice
-    cp $APP_CLOUD_SRC_HOME/modules/extensions/org.wso2.appcloud.dss.integration/target/org.wso2.appcloud.dss.integration-3.0.0-SNAPSHOT.aar $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles/wso2dataservice/base/3.5.0/
-
-    # copy esb artifacts to dockerfiles/wso2esb
-    cp $APP_CLOUD_SRC_HOME/modules/extensions/org.wso2.appcloud.esb.integration/ContainerAPICompositeApplication/target/ContainerAPICompositeApplication_3.0.0-SNAPSHOT.car $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles/wso2esb/base/5.0.0/carbonapps/
-    cp $APP_CLOUD_SRC_HOME/modules/extensions/org.wso2.appcloud.tenant.initializer/target/org.wso2.appcloud.tenant.initializer-3.0.0-SNAPSHOT.jar $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles/wso2esb/base/5.0.0/dropins/
-    cp $APP_CLOUD_SRC_HOME/modules/extensions/org.wso2.appcloud.httpgetprocessor.extensions/target/org.wso2.appcloud.httpgetprocessor.extensions-3.0.0-SNAPSHOT.jar $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles/wso2esb/base/5.0.0/lib/
 
     cp -R $APP_CLOUD_SRC_HOME/modules/resources/dockerfiles $1/repository/deployment/server/jaggeryapps/appmgt/
     cp -r $APP_CLOUD_SRC_HOME/modules/setup-scripts/jaggery/modules/* $1/modules/

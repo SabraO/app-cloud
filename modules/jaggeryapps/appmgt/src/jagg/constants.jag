@@ -32,7 +32,7 @@ var KUB_SERVICE_PORT = 80;
 var KUB_SERVICE_BACKEND_PORT = 8080;
 var KUB_SERVICE_PHP_BACKEND_PORT = 80;
 var KUB_SERVICE_PROTOCOL = "TCP";
-var DASHBOARD_BASE_URL = "Dashboard.Url";
+var DATA_ANALYTICS_SERVER_URL = "DataAnalyticsServerURL";
 var APP_CLOUD_URL = "AppCloud.Url";
 var INTEGRATION_CLOUD_URL = "IntegrationCloud.Url";
 var API_CLOUD_PUBLISHER__URL = "APICloud.Publisher.Url";
@@ -49,9 +49,12 @@ var FILE_UPLOAD_TIMEOUT = "File.Upload.Timeout";
 
 //events related constants
 var DATABASE_ADD = "Adding application to database";
-var DOCKER_FILE_CREATE = "Creating docker file";
-var DOCKER_IMAGE_BUILD = "Building docker image";
-var DOCKER_REGISTRY_PUSH = "Updating docker registry";
+var DOCKER_FILE_CREATE = "Creating Docker file";
+var DOCKER_IMAGE_BUILD = "Building Docker image";
+var DOCKER_REGISTRY_PUSH = "Updating Docker registry";
+var DOCKER_IMAGE_PULL = "Pulling Docker image from remote repo";
+var DOCKER_IMAGE_TAG = "Tagging Docker image in registry";
+var KUBE_DEPLOY = "Initializing deployment";
 var KUBE_DEPLOY = "Initializing deployment";
 var STOP_CONTAINERS = "Stopping Containers";
 var INGRESS = "Creating ingress";
@@ -79,12 +82,14 @@ var LOGIN_PERMISSION = ".Login.Permission";
 var DOC_URL = "_doc_url";
 
 var CLOUD_TYPES_PROPERTIES_CONFIG = "/jagg/cloud-types-properties.json";
+var DASHBOARD_TYPES_PROPERTIES_CONFIG = "/jagg/dashboard-types-properties.json";
 var SELECTED_CLOUD = "SELECTED_CLOUD";
 var APP_CLOUD = "app-cloud";
 var APP_CLOUD_HOSTNAME = "AppCloud.Hostname";
 var INTEGRATION_CLOUD = "integration-cloud";
 var INTEGRATION_CLOUD_HOSTNAME = "IntegrationCloud.Hostname";
 
+var CUSTOM = "custom";
 var PROFILE_URL = "Profile.Url";
 var CHANGE_PASSWORD_URL = "ChangePassword.Url";
 

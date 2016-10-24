@@ -42,6 +42,9 @@ jagg.template("envs", function(inputs, outputs, jagg) {
  <div class="right-pane visible">
     <!-- BOF App factory menu actionbar -->
     <div class="action-bar">
+        <div id="reorder-icon-div">
+
+        </div>
         <a href="/appmgt/site/pages/home.jag?applicationKey=<%=applicationKey%>" class="btn-action" data-toggle="tooltip" data-placement="top" title="Back to <%=cloudSpecificApplicationRepresentation%>">
                 <span class="fw-stack fw-lg btn-action-ico">
                     <i class="fw fw-circle-outline fw-stack-2x"></i>

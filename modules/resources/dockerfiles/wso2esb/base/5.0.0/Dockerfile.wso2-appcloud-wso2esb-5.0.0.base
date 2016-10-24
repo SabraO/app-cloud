@@ -16,21 +16,12 @@
 #
 # ------------------------------------------------------------------------
 
-FROM anapsix/alpine-java:8_server-jre_unlimited
+FROM wso2-appcloud/alpine-oracle-jdk:1.8.0-base
 
 ENV WSO2CARBON_ZIP wso2esb-5.0.0.zip
 ENV INSTALL_PATH /home/wso2user/
 ENV CARBON_HOME_PATH $INSTALL_PATH/wso2esb-5.0.0
 ENV RESOURCES_PATH $INSTALL_PATH/resources
-ENV ADMIN_PASS ""
-ENV TENANT_PASS ""
-ENV WSO2_ESB_VERSION 5.0.0
-
-RUN apk update && \
-    apk add pwgen git wget curl openjdk8 && \
-    addgroup wso2 && adduser -g '' -s /bin/bash -D -G wso2 wso2user
-
-ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk/jre/
 
 USER wso2user
 
@@ -46,12 +37,13 @@ COPY dropins/ $CARBON_HOME_PATH/repository/components/dropins/
 COPY lib/ $CARBON_HOME_PATH/repository/components/lib/
 COPY conf/ $RESOURCES_PATH/conf
 COPY carbonapps/ $RESOURCES_PATH/carbonapps
+COPY removed-bundles.txt /
 
 RUN sed -i '/<StratosPublicCloudSetup>/c<StratosPublicCloudSetup>false</StratosPublicCloudSetup>' $CARBON_HOME_PATH/repository/conf/multitenancy/stratos.xml
 RUN sed -i '/<Class>org.wso2.carbon.core.transports.util.Wsdl11Processor/c<Class>org.wso2.appcloud.httpgetprocessor.extensions.wsdl.Wsdl11UrlTenantInfoProcessor</Class>' $CARBON_HOME_PATH/repository/conf/carbon.xml && \
     sed -i '/<Class>org.wso2.carbon.core.transports.util.Wsdl20Processor/c<Class>org.wso2.appcloud.httpgetprocessor.extensions.wsdl.Wsdl20UrlTenantInfoProcessor</Class>' $CARBON_HOME_PATH/repository/conf/carbon.xml
+RUN sed -i '/<HttpGetRequestProcessors>/a <Processor>\n<Item>swagger.json</Item>\n<Class>org.wso2.appcloud.httpgetprocessor.extensions.swagger.processors.json.SwaggerJsonProcessor</Class>\n</Processor>' $CARBON_HOME_PATH/repository/conf/carbon.xml && \
+    sed -i '/<HttpGetRequestProcessors>/a <Processor>\n<Item>swagger.yaml</Item>\n<Class>org.wso2.appcloud.httpgetprocessor.extensions.swagger.processors.yaml.SwaggerYamlProcessor</Class>\n</Processor>' $CARBON_HOME_PATH/repository/conf/carbon.xml
 
 EXPOSE 8243 8280
 CMD ["bash", "-c", "source /init.sh"]
-
-

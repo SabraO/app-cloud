@@ -46,7 +46,9 @@ $(document).ready(function () {
         highlight: function (element, errorClass, validClass) {},
         unhighlight: function (element, errorClass, validClass) {},
         showErrors: function (event, validator) {
-            this.defaultShowErrors();
+	     if(!validator[0].message == ""){
+                    this.defaultShowErrors();
+	     }
         },
         errorPlacement: function (error, element) {
             if ($(element).parent().closest('div').hasClass("input-group")) {
@@ -91,7 +93,7 @@ function verifyCustomUrl() {
                 action: "verifyCustomDomain",
                 customUrl: customUrl,
                 pointedUrl: pointedUrl
-            }, verifyCustomUrlSuccess,
+            }, verifyCustomUrlSuccess(),
             function (jqXHR, textStatus, errorThrown) {
                 contentInvalidErrorMsg = jqXHR.responseText;
             });

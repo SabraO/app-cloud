@@ -42,7 +42,8 @@ USER wso2user
 RUN cp /wso2as-${WSO2_AS_VERSION}.zip $INSTALL_PATH/catalina.zip && \
     unzip $INSTALL_PATH/catalina.zip -d $INSTALL_PATH/ && \
     rm $INSTALL_PATH/catalina.zip && \
-    rm -rf $INSTALL_PATH/wso2as-${WSO2_AS_VERSION}/webapps/examples
+    rm -rf $INSTALL_PATH/wso2as-${WSO2_AS_VERSION}/webapps/examples && \
+    rm -rf $INSTALL_PATH/wso2as-${WSO2_AS_VERSION}/webapps/ROOT
 
 COPY lib/ $INSTALL_PATH/wso2as-${WSO2_AS_VERSION}/lib/
 

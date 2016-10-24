@@ -60,7 +60,7 @@ $TOMCAT_HOME_DIR/conf/server.xml
 
 sed -i "s/unpackWARs=\"true\"/unpackWARs=\"false\"/g" $TOMCAT_HOME_DIR/conf/server.xml
 
-sed -i "/\/Host/i  \\\t<Context path=\"""\" docBase=\"$APP_WAR\" debug=\"0\" reloadable=\"true\"></Context>" $TOMCAT_HOME_DIR/conf/server.xml
+sed -i "/\/Host/i  \\\<Context path=\"""\" docBase=\"$APP_WAR\" debug=\"0\" reloadable=\"true\"></Context>" $TOMCAT_HOME_DIR/conf/server.xml
 
 sed -i '/<Context>/a <JarScanner scanClassPath="false" />' $TOMCAT_HOME_DIR/conf/context.xml
 

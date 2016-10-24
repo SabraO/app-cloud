@@ -40,10 +40,12 @@ jagg.template("apptype/select", function(inputs, outputs, jagg) {
         </a>
     </div>
     <div class="container-fluid app-type-listing">
-       <div class="row listing padding-bottom-xlg" data-count="<%=appTypes.length%>">
+       <div class="row listing padding-bottom-xlg" data-count="<%=appTypes.length -1%>"> <!-- -1 was added because we hide the custom docker image app type -->
           <%
             if (appTypes.length > 0) {
                 for (var x = 0; x < appTypes.length; x++) {
+                    if(appTypes[x].name != "custom") { // This if condition is temporary. Untill we fully complete the custom docker feature and allow all users.
+                        // At the moment only wso2 internal users will be allowed to use this feature using rest API , not using UI
           %>
                 <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2 ">
                     <div class="cloud-app-type <%=appTypes[x].cssProperties.color%> cloud-app-type-max" id="<%=x + 1%>"
@@ -56,7 +58,7 @@ jagg.template("apptype/select", function(inputs, outputs, jagg) {
                     </div>
                 </div>
         <%
-                }
+                }}
             }
         %>
     </div>

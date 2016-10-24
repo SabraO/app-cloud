@@ -55,12 +55,10 @@ sed -i '$!N;s/<!--\s*\n\s*<Connector port="8443"/<Connector port="8443" connecti
                keystoreFile="\/wso2carbon.jks" keystorePass="'$CERT_PASSWORD'"/g;P;D' \
                $TOMCAT_HOME_DIR/conf/server.xml
 
-sed -i '$!N;s/clientAuth="false" sslProtocol="TLS" \/>\n\s*-->/clientAuth="false" sslProtocol="TLS" \/>/g;P;D' \
-$TOMCAT_HOME_DIR/conf/server.xml
 
-sed -i "s/unpackWARs=\"true\"/unpackWARs=\"false\"/g" $TOMCAT_HOME_DIR/conf/server.xml
-
-sed -i "/\/Host/i  \\\t<Context path=\"""\" docBase=\"$APP_WAR\" debug=\"0\" reloadable=\"true\"></Context>" $TOMCAT_HOME_DIR/conf/server.xml
+# removing .war part from the APP_NAME
+APP_NAME=$(basename $APP_WAR .war)
+sed -i "/\/Host/i  \\\<Context path=\"""\" docBase=\"$APP_NAME\" debug=\"0\" reloadable=\"true\"></Context>" $TOMCAT_HOME_DIR/conf/server.xml
 
 # enable jaggery environment
 sed -i "s/.*<environments>CXF<\/environments>.*/<environments>CXF,jaggery<\/environments>/" $TOMCAT_HOME_DIR/conf/wso2/wso2as-web.xml
